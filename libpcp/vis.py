@@ -46,7 +46,7 @@ def exercise_vis1D(show_result=True):
 
     plt.figure(figsize=(6, 6))
     plt.subplot(3, 1, 1)
-    plt.stem(t, x, use_line_collection=True)
+    plt.stem(t, x)
     plt.xlim((0, 1/omega))
     plt.ylabel('Amplitude')
     plt.xlabel('Time (seconds)')

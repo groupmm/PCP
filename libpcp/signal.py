@@ -112,7 +112,7 @@ def plot_signal_reconstructed(t_1, x_1, t_2, x_2, t_sinc, x_sinc, figsize=(8, 2.
     """
     plt.figure(figsize=figsize)
     plt.plot(t_1, x_1, 'k', linewidth=1, linestyle='dotted', label='Orignal signal')
-    plt.stem(t_2, x_2, linefmt='r:', markerfmt='r.', basefmt='None', label='Samples', use_line_collection=True)
+    plt.stem(t_2, x_2, linefmt='r:', markerfmt='r.', basefmt='None', label='Samples')
     plt.plot(t_sinc, x_sinc, 'b', label='Reconstructed signal')
     plt.title(r'Sampling rate $F_\mathrm{s} = %.0f$' % (1/t_2[1]))
     plt.xlabel('Time (seconds)')
