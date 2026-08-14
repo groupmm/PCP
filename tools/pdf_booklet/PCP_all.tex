@@ -1,0 +1,148 @@
+\DocumentMetadata{}
+\documentclass[9pt,twoside]{article}
+
+% -------------------------------------------------
+% Packages
+% -------------------------------------------------
+\usepackage{fontspec}
+\setmainfont{Constantia}
+\usepackage{microtype}
+
+\usepackage{pdfpages}      			% For including PDF pages
+\usepackage{newpax}					% For preserving hyperlinks when using includepdf
+\usepackage{fancyhdr}      			% For page numbering style
+\usepackage{geometry}      			% For page margins
+\usepackage{graphicx}      			% For including logos
+\usepackage{tocloft}        		% For table of contents
+\usepackage[hidelinks]{hyperref}	% For clickable table of contents
+
+% -------------------------------------------------
+% Page setup
+% -------------------------------------------------
+% Load current version number
+\newcommand{\version}{\input{../../VERSION}}
+
+\renewcommand{\sectionmark}[1]{\markright{#1}}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Set header and footer
+\geometry{
+  paperwidth=17cm,
+  paperheight=24cm,
+  twoside,
+  inner=25mm,
+  outer=20mm,
+  top=25mm,
+  bottom=20mm,
+  headheight=5mm,
+  headsep=10mm
+}
+
+\setlength{\footskip}{7.5mm} 		% 12.5mm below page number
+
+\newlength{\marginshift}
+\setlength{\marginshift}{2.5mm} 	% (25mm - 20mm) / 2
+
+\fancyhf{} 				   													% Clear all header and footer fields
+\fancyhead[LE]{\fontsize{9pt}{11pt}\selectfont\textit{\rightmark}}			% Even pages, outer side: section title
+\fancyhead[RO]{\fontsize{9pt}{11pt}\selectfont\textit{\rightmark}}  		% Odd pages, outer side: section title
+\fancyfoot[LE, RO]{\fontsize{9pt}{11pt}\selectfont\thepage}					% Outer edges: page number
+
+% First page of a section: no section title in header
+\fancypagestyle{sectionfirst}{%
+  \fancyhf{}%
+  \fancyhead[LE]{\fontsize{9pt}{11pt}\selectfont\textit{\rightmark}}%
+  \fancyfoot[LE, RO]{\fontsize{9pt}{11pt}\selectfont\thepage}%
+}
+
+% Footnote rule length
+\renewcommand{\footnoterule}{%
+  \kern -3pt
+  \hrule width 52mm height 0.4pt
+  \kern 2.6pt
+}
+
+% Footnote font size
+\makeatletter
+\renewcommand{\footnotesize}{%
+  \fontsize{7.5}{10}\selectfont
+}
+\makeatother
+
+% TOC dots for sections
+\renewcommand{\cftdotsep}{3}		% Adjust spacing between dots
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+% -------------------------------------------------
+% Macro for including pdfs 
+% -------------------------------------------------
+\newcounter{pdfpage}
+\newcommand{\pdfsection}[3]{%
+ 	\pagestyle{empty}
+  	\cleardoublepage
+  	\pagestyle{fancy}
+  	\phantomsection
+  	\addcontentsline{toc}{section}{#1}
+  	\markright{#1}
+  	\setcounter{pdfpage}{0}%
+  	\includepdf[
+    	pages=-,
+    	offset={\the\marginshift} 0.4mm,
+    	pagecommand={%
+      		\stepcounter{pdfpage}%
+      		\ifnum\value{pdfpage}=1
+        		\thispagestyle{sectionfirst}%
+      		\else
+        		\thispagestyle{fancy}%
+      		\fi
+    	},
+    	scale=1.003,
+  	]{#3}%
+}
+
+% -------------------------------------------------
+% Document
+% -------------------------------------------------
+\begin{document}
+
+% ---------------- Title Page ----------------
+\input{titlepage}
+\pagestyle{empty}
+\newpage
+
+% ---------------- Preface ----------------
+% \cleardoublepage
+% \pagenumbering{roman}
+% \setcounter{page}{1}
+% \pagestyle{fancy}
+% \markright{Preface}
+% \thispagestyle{sectionfirst}
+% \input{preface}
+
+% ---------------- Table of Contents ----------------
+\cleardoublepage
+\renewcommand{\contentsname}{Contents \\}
+\markright{}
+\tableofcontents
+\thispagestyle{fancy}
+\pagestyle{empty}
+\newpage
+
+% ---------------- Include PDFs ----------------
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+\pdfsection{Introduction}{intro}{../../PCP.pdf}
+\pdfsection{Unit 1: Get Started}{getstarted}{../../PCP_01_getstarted.pdf}
+\pdfsection{Unit 2: Python Basics}{classes}{../../PCP_02_python.pdf}
+\pdfsection{Unit 3: NumPy Basics}{tensor}{../../PCP_03_numpy.pdf}
+\pdfsection{Unit 4: Control Structures and Functions}{grad}{../../PCP_04_control.pdf}
+\pdfsection{Unit 5: Visualization Using Matplotlib}{nn}{../../PCP_05_vis.pdf}
+\pdfsection{Unit 6: Complex Numbers}{convolution}{../../PCP_06_complex.pdf}
+\pdfsection{Unit 7: Exponential Function}{classification}{../../PCP_07_exp.pdf}
+\pdfsection{Unit 8: Signals and Sampling}{training}{../../PCP_08_signal.pdf}
+\pdfsection{Unit 9: Discrete Fourier Transform (DFT)}{recursion}{../../PCP_09_dft.pdf}
+\pdfsection{Unit 10: Python Modules and Packages}{essential}{../../PCP_10_module.pdf}
+
+\end{document}

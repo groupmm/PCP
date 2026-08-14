@@ -1,0 +1,165 @@
+{% extends 'lab/index.html.j2' %}
+
+{% block header %}
+{{ super() }}
+<style type="text/css">
+    /* Prose content */
+    body,
+    .jp-RenderedHTMLCommon {
+        font-size: 10.5pt !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Code / Consolas content */
+    pre, code, tt,
+    .jp-RenderedText,
+    .jp-CodeCell .jp-InputArea-editor {
+        font-size: 8.5pt !important;
+        line-height: 1.5 !important;
+    }
+
+    /* Tighter line height for markdown cells */
+    .jp-MarkdownCell .jp-RenderedHTMLCommon {
+        line-height: 1.2 !important;
+    }
+
+    /* Adjust table fontsize and spacing */
+    table,
+    .jp-RenderedHTMLCommon table,
+    .jp-RenderedHTMLCommon td,
+    .jp-RenderedHTMLCommon th,
+    .dataframe,
+    .dataframe td,
+    .dataframe th {
+        font-size: 9pt !important;
+        line-height: 1.2 !important;    /* tighter spacing */
+        text-align: left !important;
+        vertical-align: middle !important;
+    }
+
+    /* Keep inline code at code default size inside table cells */
+    .jp-RenderedHTMLCommon td code,
+    .jp-RenderedHTMLCommon th code,
+    .dataframe td code,
+    .dataframe th code {
+        font-size: 7.5pt !important;
+    }
+
+    /* Header font sizes */
+    .jp-RenderedHTMLCommon h1 { font-size: 20pt !important; }
+    .jp-RenderedHTMLCommon h2 { font-size: 18pt !important; }
+    .jp-RenderedHTMLCommon h3 { font-size: 14pt !important; }
+    .jp-RenderedHTMLCommon h4,
+    .jp-RenderedHTMLCommon h5,
+    .jp-RenderedHTMLCommon h6 {
+        font-size: 12pt !important;
+    }
+
+    /* Make headers bold and set margins*/
+    .jp-RenderedHTMLCommon h1,
+    .jp-RenderedHTMLCommon h2,
+    .jp-RenderedHTMLCommon h3,
+    .jp-RenderedHTMLCommon h4,
+    .jp-RenderedHTMLCommon h5,
+    .jp-RenderedHTMLCommon h6 {
+        font-weight: 700 !important;
+        margin-top: 0.5em !important;
+        margin-bottom: 0.5em !important;
+        line-height: 1.0 !important;
+    }
+
+    /* Set page margins for PDF export */
+    @page {
+        margin-top: 2.0cm;
+        margin-right: 2.6cm;
+        margin-bottom: 1.3cm;
+        margin-left: 2.6cm;
+    }
+
+    /* Reduce padding inside notebook container */
+    .jp-Notebook {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    /* Also remove some spacing around cells */
+    .jp-Cell {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    /* Remove cell margins and paddings */
+    .jp-RenderedHTMLCommon {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        max-width: 100% !important;
+    }
+
+    /* Cell output text */
+    .jp-RenderedText,
+    .jp-OutputArea .jp-RenderedMarkdown {
+        padding-left: 20px !important;
+    }
+
+    /* Hide code cell numbers (execution counts) */
+    .jp-InputPrompt,
+    .jp-OutputPrompt,
+    .jp-InputArea-prompt,
+    .jp-OutputArea-prompt {
+        display: none !important;
+    }
+
+    /* Main font */
+    body,
+    .jp-RenderedHTMLCommon {
+        font-family: "Constantia", serif !important;
+        text-align: justify !important;
+        text-justify: inter-word;
+    }
+
+    /* Improve word breaking */
+    p {
+        text-align: justify !important;
+        hyphens: auto;
+    }
+
+    /* Keep headings left-aligned */
+    h1, h2, h3, h4 {
+        text-align: left !important;
+    }
+
+    /* Prevent orphan headers at page bottom, and splits within multi-line headers */
+    h1, h2, h3, h4, h5, h6 {
+        break-after: avoid;
+        page-break-after: avoid;
+        break-inside: avoid;
+        page-break-inside: avoid;
+    }
+
+    /* Repeat padding/background on each page fragment when a div breaks */
+    .jp-RenderedHTMLCommon div,
+    .jp-CodeCell .jp-Cell-inputWrapper,
+    .jp-CodeCell .jp-InputArea,
+    .jp-CodeCell .jp-InputArea-editor,
+    .jp-CodeCell pre {
+        -webkit-box-decoration-break: clone;
+        box-decoration-break: clone;
+    }
+
+    /* Keep code blocks non-justified */
+    pre, code, tt {
+        font-family: Consolas, monospace !important;
+        text-align: left !important;
+    }
+
+    /* Allow long print outputs to split across pages */
+    .jp-OutputArea,
+    .jp-OutputArea-child,
+    .jp-OutputArea-output,
+    .jp-RenderedText {
+        break-inside: auto !important;
+    }
+</style>
+{% endblock header %}

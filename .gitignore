@@ -1,33 +1,27 @@
-# https://stackoverflow.com/questions/987142/make-gitignore-ignore-everything-except-a-few-files
-#
-# Ignore everything
-*
-
-# But not these files ...
-!.gitignore
-!environment.yml
-!README.md
-!LICENSE
-!*.ipynb
-!*.html
-
-# ...even if they are in subdirectories
-!*/
-
-# if the files to be tracked are in subdirectories
-!libpcp/*.py
-!tools/*.py
-!data/*.txt
-!data/2021_MuellerR_PCP_JOSE_tobesubmitted.pdf
-!data/PCP_fig_erlangen.png
-!data/PCP_fig_matmult.png
-!data_layout/PCP_License.png
-!data_layout/PCP_Teaser.png
-!data_layout/PCP_MIT_License_OSIApproved.png
-!data_layout/PCP_MIT_License_OSIApproved_text.png
-!*/.gitkeep
-!paper/*
-!.github/workflows/*
-
-# But ignore these folders/files
+# Jupyter notebook checkpoints
 .ipynb_checkpoints
+
+# Bytecode files
+__pycache__/
+
+# Intermediate LaTeX files
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.loa
+*.lof
+*.lot
+*.toc
+*.bak
+*.dvi
+*.ps
+*.auxlock
+*.newpax
+*.fls
+
+# Exported html and pdf files
+PCP*.html
+PCP*.pdf
