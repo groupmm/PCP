@@ -4,6 +4,9 @@
 # Bytecode files
 __pycache__/
 
+# Generated output figures
+output/
+
 # Intermediate LaTeX files
 *.aux
 *.bbl
