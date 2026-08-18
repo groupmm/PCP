@@ -8,6 +8,8 @@ This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
 import numpy as np
 
 
+np.random.seed(0)
+
 def add(a, b=0, c=0):
     """Function to add three numbers
 

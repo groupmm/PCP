@@ -27,24 +27,24 @@ def exercise_vis1D(show_result=True):
     omega = 5
     x = np.sin(2 * np.pi * omega * t)
 
-    plt.figure(figsize=(6, 1.5))
+    plt.figure(figsize=(4.5, 1.2))
     plt.plot(t, x)
 
-    plt.figure(figsize=(6, 1.5))
+    plt.figure(figsize=(4.5, 1.2))
     plt.plot(t, x, color='red', linewidth=2, linestyle='-', marker='*')
     plt.ylabel('Amplitude')
     plt.xlabel('Time (seconds)')
-    plt.title('Sinusoid of frequency $\omega=5$')
+    plt.title(r'Sinusoid of frequency $\omega=5$')
     plt.grid()
 
-    plt.figure(figsize=(6, 1.5))
+    plt.figure(figsize=(4.5, 1.2))
     plt.plot(t, x, color='blue', linewidth=1, linestyle=':', marker='.', markersize=10)
     plt.xlim((0, 1/omega))
     plt.ylabel('Amplitude')
     plt.xlabel('Time (seconds)')
     plt.title('One period of sinusoid')
 
-    plt.figure(figsize=(6, 6))
+    plt.figure(figsize=(4.5, 5.0))
     plt.subplot(3, 1, 1)
     plt.stem(t, x)
     plt.xlim((0, 1/omega))
@@ -98,10 +98,11 @@ def exercise_circle(show_result=True):
         f_1 = np.cos(2*np.pi*t)
         f_2 = np.sin(2*np.pi*t)
         ax.plot(f_1, f_2, color='red', linewidth=1, linestyle='-', marker='.')
+        ax.set_aspect('equal')
 
-    plt.figure(figsize=(10, 2.5))
+    plt.figure(figsize=(4, 4))
     for i, Fs in enumerate([4, 8, 16, 32]):
-        ax = plt.subplot(1, 4, i+1)
+        ax = plt.subplot(2, 2, i+1)
         plot_circle(Fs, ax)
     plt.tight_layout()
 
@@ -122,28 +123,31 @@ def exercise_logaxis(show_result=True):
     f = np.exp(x)
     g = x
     h = 1.1 + np.sin(10*x)
-    plt.figure(figsize=(12, 3))
+    plt.figure(figsize=(6.1, 4.5))
 
-    plt.subplot(1, 4, 1)
+    plt.subplot(2, 2, 1)
     plt.plot(x, f, x, g, x, h)
     plt.grid()
     plt.legend(['f', 'g', 'h'])
     plt.title('plt.plot')
 
-    plt.subplot(1, 4, 2)
+    plt.subplot(2, 2, 2)
     plt.semilogy(x, f, x, g, x, h)
+    plt.minorticks_off()
     plt.grid()
     plt.legend(['f', 'g', 'h'])
     plt.title('plt.semilogy')
 
-    plt.subplot(1, 4, 3)
+    plt.subplot(2, 2, 3)
     plt.semilogx(x, f, x, g, x, h)
+    plt.minorticks_off()
     plt.grid()
     plt.legend(['f', 'g', 'h'])
     plt.title('plt.semilogx')
 
-    plt.subplot(1, 4, 4)
+    plt.subplot(2, 2, 4)
     plt.loglog(x, f, x, g, x, h)
+    plt.minorticks_off()
     plt.grid()
     plt.legend(['f', 'g', 'h'])
     plt.title('plt.loglog')
@@ -165,15 +169,13 @@ def exercise_plot3d(show_result=True):
     X, Y = np.meshgrid(np.arange(-1, 1.01, 0.01), np.arange(-1, 1.01, 0.01))
     f = np.sinc(3*X) + np.sinc(3*Y)
 
-    fig = plt.figure(figsize=(10, 6))
-    ax = fig.add_subplot(projection='3d')
+    fig = plt.figure(figsize=(6.2, 2.9))
+    ax = fig.add_subplot(1, 2, 1, projection='3d')
     ax.plot_surface(X, Y, f, cmap='coolwarm')
-    plt.show()
 
-    fig = plt.figure(figsize=(10, 6))
-    ax = fig.add_subplot(projection='3d')
-    ax.plot_wireframe(X, Y, f)
-    plt.show()
+    ax = fig.add_subplot(1, 2, 2, projection='3d')
+    ax.plot_wireframe(X, Y, f, linewidth=1)
+    plt.tight_layout()
 
 
 def exercise_erlangen(show_result=True):
@@ -190,7 +192,7 @@ def exercise_erlangen(show_result=True):
     img = mpimg.imread('./data/PCP_fig_erlangen.png')
     print('Size of image array (pixels, pixels, channels): ', img.shape)
 
-    plt.figure(figsize=(12, 10))
+    plt.figure(figsize=(6.1, 8))
     plt.subplot(3, 2, 1)
     plt.imshow(img)
 
