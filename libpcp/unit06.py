@@ -1,5 +1,5 @@
 """
-Module: libpcp.complex
+Module: libpcp.unit06
 Author: Meinard Mueller, International Audio Laboratories Erlangen
 License: The MIT license, https://opensource.org/licenses/MIT
 This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
@@ -12,7 +12,7 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
 
-def generate_figure(figsize=(2, 2), xlim=[0, 1], ylim=[0, 1]):
+def generate_figure(figsize=(4.5, 2.0), xlim=[0, 1], ylim=[0, 1]):
     """Generate figure for plotting complex numbers
 
     Notebook: PCP_06_complex.ipynb
@@ -26,8 +26,8 @@ def generate_figure(figsize=(2, 2), xlim=[0, 1], ylim=[0, 1]):
     plt.grid()
     plt.xlim(xlim)
     plt.ylim(ylim)
-    plt.xlabel('$\mathrm{Re}$')
-    plt.ylabel('$\mathrm{Im}$')
+    plt.xlabel(r'$\mathrm{Re}$')
+    plt.ylabel(r'$\mathrm{Im}$')
 
 
 def plot_vector(c, color='k', start=0, linestyle='-'):
@@ -90,7 +90,7 @@ def exercise_complex(show_result=True):
     c = a + b*1j
     c_conj = np.conj(c)
     c_inv = 1 / c
-    generate_figure(figsize=(5, 2.5), xlim=[-0.25, 1.75], ylim=[-0.5, 0.5])
+    generate_figure(xlim=[-0.25, 1.75], ylim=[-0.5, 0.5])
     v1 = plot_vector(c, color='k')
     v2 = plot_vector(c_conj, color='b')
     v3 = plot_vector(c_inv, color='r')
@@ -113,7 +113,7 @@ def exercise_complex(show_result=True):
         return c_rot
 
     c = 1 + 0.5*1j
-    generate_figure(figsize=(5, 2.5), xlim=[-0.25, 1.75], ylim=[-0.25, 0.75])
+    generate_figure(xlim=[-0.25, 1.75], ylim=[-0.25, 0.75])
     v1 = plot_vector(c, color='k')
     v2 = plot_vector(rotate_complex(c, 10), color='b')
     v3 = plot_vector(rotate_complex(c, 20), color='g')
@@ -143,13 +143,13 @@ def exercise_polynomial(show_result=True):
             title: Plot title (Default value = '')
         """
         poly_root = np.roots(p)
-        ax.scatter(np.real(poly_root), np.imag(poly_root), color='red')
+        ax.scatter(np.real(poly_root), np.imag(poly_root), color='red', s=20)
         ax.grid()
         ax.set_title(title)
-        ax.set_xlabel('$\mathrm{Re}$')
-        ax.set_ylabel('$\mathrm{Im}$')
+        ax.set_xlabel(r'$\mathrm{Re}$')
+        ax.set_ylabel(r'$\mathrm{Im}$')
 
-    fig, ax = plt.subplots(2, 3, figsize=(10, 6))
+    fig, ax = plt.subplots(3, 2, figsize=(5, 7))
 
     p = np.array([1, 0, -2])
     vis_root(p, ax[0, 0], title='$p(z)=z^2-2$')
@@ -158,16 +158,16 @@ def exercise_polynomial(show_result=True):
     vis_root(p, ax[0, 1], title='$p(z)=z^2+2$')
 
     p = np.array([1, 0, 0, 0, 0, 0, 0, 0, -1])
-    vis_root(p, ax[0, 2], '$p(z)=z^8-1$')
+    vis_root(p, ax[1, 0], '$p(z)=z^8-1$')
 
     p = np.array([1, 1, 1, 0, 0, 0, 0, 0, 0])
-    vis_root(p, ax[1, 0], '$p(z)=z^8 + z^7 + z^6$')
+    vis_root(p, ax[1, 1], '$p(z)=z^8 + z^7 + z^6$')
 
     p = np.array([1, 1, 1, 0, 0, 0, 0, 0, 0.000001])
-    vis_root(p, ax[1, 1], '$p(z)=z^8 + z^7 + z^6 + 0.000001$')
+    vis_root(p, ax[2, 0], '$p(z)=z^8 + z^7 + z^6 + 0.000001$')
 
     p = np.array([1, -2j, 2 + 4j, 3])
-    vis_root(p, ax[1, 2], '$p(z)=z^3 -2iz^2 + (2+4i)z + 3 $')
+    vis_root(p, ax[2, 1], '$p(z)=z^3 -2iz^2 + (2+4i)z + 3 $')
 
     plt.tight_layout()
 
@@ -210,9 +210,10 @@ def exercise_mandelbrot(show_result=True):
                     mandel[m, n] = 0
                     break
 
-    plt.figure(figsize=(6, 4))
+    plt.figure(figsize=(6.1, 4))
     extent = [a_min, a_max, b_min, b_max]
     plt.imshow(mandel, origin='lower', cmap='gray_r', extent=extent)
+    plt.tight_layout()
 
 
 def exercise_mandelbrot_fancy(show_result=True, save_file=False):
@@ -257,10 +258,11 @@ def exercise_mandelbrot_fancy(show_result=True, save_file=False):
 
     color_wb = LinearSegmentedColormap.from_list('color_wb', [[1, 1, 1, 0], [0, 0, 0, 1]], N=2)
 
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(6.1, 4))
     extent = [a_min, a_max, b_min, b_max]
     plt.imshow(np.log(np.log(mandel_iter)), origin='lower', cmap='YlOrBr_r', extent=extent)
     plt.imshow(mandel, origin='lower', cmap=color_wb, extent=extent)
+    plt.tight_layout()
     if save_file is True:
         output_path_filename = os.path.join('.', 'output', 'Mandelbrot.png')
         plt.savefig(output_path_filename)

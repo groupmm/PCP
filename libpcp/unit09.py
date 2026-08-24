@@ -7,8 +7,49 @@ This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
 
 import numpy as np
 from matplotlib import pyplot as plt
-import libpcp.signal
 
+
+def generate_sinusoid(dur=1, amp=1, freq=1, phase=0, Fs=100):
+    """Generation of sinusoid
+
+    Notebook: PCP_08_signal.ipynb
+
+    Args:
+        dur: Duration (in seconds) of sinusoid (Default value = 1)
+        amp: Amplitude of sinusoid (Default value = 1)
+        freq: Frequency (in Hertz) of sinusoid (Default value = 1)
+        phase: Phase (relative to interval [0,1)) of sinusoid (Default value = 0)
+        Fs: Sampling rate (in samples per second) (Default value = 100)
+
+    Returns:
+        x: Signal
+        t: Time axis (in seconds)
+    """
+    num_samples = int(Fs * dur)
+    t = np.arange(num_samples) / Fs
+    x = amp * np.sin(2 * np.pi * (freq * t - phase))
+    return x, t
+
+
+def generate_example_signal(dur=1, Fs=100):
+    """Generate example signal
+
+    Notebook: PCP_08_signal.ipynb
+
+    Args:
+        dur: Duration (in seconds) of signal (Default value = 1)
+        Fs: Sampling rate (in samples per second) (Default value = 100)
+
+    Returns:
+        x: Signal
+        t: Time axis (in seconds)
+    """
+    N = int(Fs * dur)
+    t = np.arange(N) / Fs
+    x = 1 * np.sin(2 * np.pi * (1.9 * t - 0.3))
+    x += 0.5 * np.sin(2 * np.pi * (6.1 * t - 0.1))
+    x += 0.1 * np.sin(2 * np.pi * (20 * t - 0.2))
+    return x, t
 
 def plot_inner_product(ax, t, x, y, color_x='k', color_y='r', label_x='x', label_y='y'):
     """Plot inner product
@@ -61,15 +102,15 @@ def plot_signal_e_k(ax, x, k, show_e=True, show_opt=False):
               (k, X_k.real, X_k.imag, np.abs(X_k)))
     if show_e is True:
         ax.plot(time_index, c_k, 'r', marker='.', markersize='5',
-                 linewidth=1.0, linestyle=':', label='$\mathrm{Re}(\overline{\mathbf{u}}_k)$')
+                 linewidth=1.0, linestyle=':', label=r'$\mathrm{Re}(\overline{\mathbf{u}}_k)$')
         ax.plot(time_index, s_k, 'b', marker='.', markersize='5',
-                 linewidth=1.0, linestyle=':', label='$\mathrm{Im}(\overline{\mathbf{u}}_k)$')
+                 linewidth=1.0, linestyle=':', label=r'$\mathrm{Im}(\overline{\mathbf{u}}_k)$')
     if show_opt is True:
         phase_k = - np.angle(X_k) / (2 * np.pi)
         cos_k_opt = np.cos(2 * np.pi * (k * time_index / N - phase_k))
         d_k = np.sum(x * cos_k_opt)
         ax.plot(time_index, cos_k_opt, 'g', marker='.', markersize='5',
-                 linewidth=1.0, linestyle=':', label='$\cos_{k, opt}$')
+                 linewidth=1.0, linestyle=':', label=r'$\cos_{k, opt}$')
     plt.grid()
     plt.legend(loc='lower right')
 
@@ -141,7 +182,7 @@ def fft(x):
         return X
 
 
-def plot_signal_dft(t, x, X, ax_sec=False, ax_Hz=False, freq_half=False, figsize=(10, 2)):
+def plot_signal_dft(t, x, X, ax_sec=False, ax_Hz=False, freq_half=False, figsize=(6.2, 1.8)):
     """Plotting function for signals and its magnitude DFT
 
     Notebook: PCP_09_dft.ipynb
@@ -202,7 +243,7 @@ def exercise_freq_index(show_result=True):
 
     Fs = 64
     dur = 2
-    x, t = libpcp.signal.generate_example_signal(Fs=Fs, dur=dur)
+    x, t = generate_example_signal(Fs=Fs, dur=dur)
     X = fft(x)
 
     print('=== Plot with axes given in indices (Fs=64, dur=2) ===', flush=True)
@@ -213,7 +254,7 @@ def exercise_freq_index(show_result=True):
 
     Fs = 32
     dur = 2
-    x, t = libpcp.signal.generate_example_signal(Fs=Fs, dur=dur)
+    x, t = generate_example_signal(Fs=Fs, dur=dur)
     X = fft(x)
 
     print('=== Plot with axes given in indices (Fs=32, dur=2) ===', flush=True)

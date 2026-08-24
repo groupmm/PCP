@@ -1,5 +1,5 @@
 """
-Module: libpcp.exp
+Module: libpcp.unit07
 Author: Meinard Mueller, International Audio Laboratories Erlangen
 License: The MIT license, https://opensource.org/licenses/MIT
 This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
@@ -8,7 +8,7 @@ This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
 import numpy as np
 from matplotlib import pyplot as plt
 from math import gcd
-from libpcp.complex import plot_vector
+from libpcp.unit06 import plot_vector
 
 
 def exp_approx_Euler(x_min=0, x_max=2, x_delta=0.01, f_0=1):
@@ -66,8 +66,8 @@ def plot_root_unity(N, ax):
     ax.grid()
     ax.set_xlim([-1.4, 1.4])
     ax.set_ylim([-1.4, 1.4])
-    ax.set_xlabel('$\mathrm{Re}$')
-    ax.set_ylabel('$\mathrm{Im}$')
+    ax.set_xlabel(r'$\mathrm{Re}$')
+    ax.set_ylabel(r'$\mathrm{Im}$')
     ax.set_title('Roots of unity for $N=%d$' % N)
 
     for n in range(0, N):
@@ -135,15 +135,16 @@ def exercise_approx_exp(show_result=True):
         z0 = np.exp(z)
         z1 = exp_power_series(z, n)
         z2 = exp_limit_compound(z, n)
-        print(f'N = {n:3d}, Numpy = {z0:.10f}, Approx1 = {z1:.10f}, Approx2 = {z2:.10f}')
+        print(f'N={n:3d}, Numpy={z0:.10f}, Approx1={z1:.10f}, Approx2={z2:.10f}')
 
+    print('')
     z = 2 + 0.7*1j
     print(f'Input argument z = ({z.real:1.1f}, {z.imag:1.1f})')
     for n in np.array([1, 2, 4, 8, 16, 32, 64, 128, 256, 512]):
         z0 = np.exp(z)
         z1 = exp_power_series(z, n)
         z2 = exp_limit_compound(z, n)
-        print(f'N = {n:3d}, Numpy = ({z0.real:2.6f}, {z0.imag:2.6f}), Approx1 = ({z1.real:2.6f}, {z1.imag:2.6f}), Approx2 = ({z2.real:2.6f}, {z2.imag:2.6f})')
+        print(f'N={n:3d}, Numpy=({z0.real:2.4f}, {z0.imag:2.4f}), Approx1=({z1.real:2.4f}, {z1.imag:2.4f}), Approx2=({z2.real:2.4f}, {z2.imag:2.4f})')
 
 
 def exercise_gaussian(show_result=True):
@@ -178,7 +179,7 @@ def exercise_gaussian(show_result=True):
     x_delta = 0.01
     x = np.arange(x_min, x_max+x_delta, x_delta)
 
-    plt.figure(figsize=(10, 3))
+    plt.figure(figsize=(6.2, 2.5))
     plt.xlim([x_min, x_max])
     plt.ylim([0, 0.6])
     y1 = compute_gaussian_1D(x, mu=0, sigma=1)
@@ -193,7 +194,7 @@ def exercise_gaussian(show_result=True):
     y4 = compute_gaussian_1D(x, mu=2, sigma=0.8)
     plt.plot(x, y4, 'g')
 
-    plt.legend(['$\mu=0, \sigma=1$', '$\mu=-3, \sigma=1.5$', '$\mu=5, \sigma=1$', '$\mu=2, \sigma=0.8$'],
+    plt.legend([r'$\mu=0, \sigma=1$', r'$\mu=-3, \sigma=1.5$', r'$\mu=5, \sigma=1$', r'$\mu=2, \sigma=0.8$'],
                loc='upper left', framealpha=1)
     plt.xlim([x_min, x_max])
     plt.grid()
@@ -249,8 +250,9 @@ def exercise_spiral(show_result=True):
         ax.set_ylim([-rad_end*1.1, rad_end*1.1])
         ax.plot(spiral.real, spiral.imag)
         ax.grid()
+        ax.set_aspect('equal')
 
-    plt.figure(figsize=(11, 3.5))
+    plt.figure(figsize=(6.2, 3))
     ax = plt.subplot(1, 3, 1)
     [rad_start, rad_end, num_rot, angle_start, N] = [0.2, 2, 10, 0, 501]
     spiral = generate_spiral(rad_start, rad_end, num_rot, angle_start, N)

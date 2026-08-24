@@ -1,5 +1,5 @@
 """
-Module: libpcp.signal
+Module: libpcp.unit08
 Author: Meinard Mueller, International Audio Laboratories Erlangen
 License: The MIT license, https://opensource.org/licenses/MIT
 This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
@@ -96,7 +96,7 @@ def reconstruction_sinc(x, t, t_sinc):
     return x_sinc
 
 
-def plot_signal_reconstructed(t_1, x_1, t_2, x_2, t_sinc, x_sinc, figsize=(8, 2.2)):
+def plot_signal_reconstructed(t_1, x_1, t_2, x_2, t_sinc, x_sinc, figsize=(6.2, 2.0)):
     """Plotting three signals
 
     Notebook: PCP_08_signal.ipynb
@@ -123,7 +123,7 @@ def plot_signal_reconstructed(t_1, x_1, t_2, x_2, t_sinc, x_sinc, figsize=(8, 2.
     plt.show()
 
 
-def plot_interference(t, x1, x2, figsize=(8, 2), xlim=None, ylim=None, title=''):
+def plot_interference(t, x1, x2, figsize=(6.2, 2.0), xlim=None, ylim=None, title=''):
     """Plotting two signals and its superposition
 
     Notebook: PCP_08_signal.ipynb
@@ -203,7 +203,7 @@ def exercise_aliasing_sinus(show_result=True):
 
     x, t = generate_sinusoid(dur=2, Fs=128, freq=10)
 
-    figsize = (8, 2.2)
+    figsize = (6.2, 2.0)
     plt.figure(figsize=figsize)
     plt.plot(t, x, 'k')
     plt.title('Original CT-signal')

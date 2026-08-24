@@ -1,2 +1,2 @@
-from .module import string_init, \
+from .unit10 import string_init, \
     test_function_init
