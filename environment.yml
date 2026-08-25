@@ -9,7 +9,7 @@ dependencies:
   - pip=26.2.*                    # Package installer for Python
   - numpy=2.5.*                   # NumPy
   - matplotlib=3.11.*             # Matplotlib
-  - jupyter=1.1.*                 # Jupyter metapackage (notebook, lab, ipykernel, ...)
+  - jupyter=1.1.*                 # Jupyter metapackage (notebook, lab, ipykernel)
   - pip:                          # Packages that are installed via pip
     - nbconvert[webpdf]==7.17.*   # HTML/PDF export
     - nbstripout==0.9.*           # strip notebook output

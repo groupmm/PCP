@@ -293,7 +293,7 @@ def exercise_root(show_result=True):
             print('Interval not valid.')
             return np.nan
         elif f(a)*f(b) > 0:
-            print(f'a = {a:.6f}, b = {b:.6f}, f(a) = {f(a):.6f}, f(b) = {f(b):.6f}')
+            print(f'a={a:.6f}, b={b:.6f}, f(a)={f(a):.6f}, f(b)={f(b):.6f}')
             print('Sign condition not fulfilled')
             return np.nan
         else:
@@ -303,7 +303,7 @@ def exercise_root(show_result=True):
                 f_a = f(a)
                 f_b = f(b)
 
-                print(f'a = {a:.6f}, b = {b:.6f}, c = {c:.6f}, f(a) = {f_a:.6f}, f(b) = {f_b:.6f}, f(c) = {f_c:.6f}')
+                print(f'a={a:.6f}, b={b:.6f}, c={c:.6f}, f(a)={f_a:.6f}, f(b)={f_b:.6f}, f(c)={f_c:.6f}')
 
                 # check if we have already found a root
                 if f_a == 0:
@@ -326,15 +326,15 @@ def exercise_root(show_result=True):
     print(f'Root r = {r:.6f}, f(r) = {f(r):.6f}')
     # Root r = 1.414207, f(r) = -0.000017
 
-    print('=== Function f(x) = x**2-2 ===')
+    print('\n=== Function f(x) = x**2-2 ===')
     r = search_root(f, 2, 4)
     print(f'Root r = {r:.6f}, f(r) = {f(r):.6f}')
 
-    print('=== Function f(x) = x**2-2 ===')
+    print('\n=== Function f(x) = x**2-2 ===')
     r = search_root(f, 4, 2)
     print(f'Root r = {r:.6f}, f(r) = {f(r):.6f}')
 
-    print('=== Function f(x) = sin(x) ===')
+    print('\n=== Function f(x) = sin(x) ===')
     r = search_root(np.sin, 3, 4)
     print(f'Root r = {r:.6f}, sin(r) = {np.sin(r):.6f}')
     # Root r = 3.141594, sin(r) = -0.000001

@@ -44,29 +44,26 @@ def exercise_vis1D(show_result=True):
     plt.xlabel('Time (seconds)')
     plt.title('One period of sinusoid')
 
-    plt.figure(figsize=(4.5, 5.0))
-    plt.subplot(3, 1, 1)
+    plt.figure(figsize=(4.5, 1.2))
     plt.stem(t, x)
     plt.xlim((0, 1/omega))
     plt.ylabel('Amplitude')
     plt.xlabel('Time (seconds)')
     plt.title('Stem plot')
 
-    plt.subplot(3, 1, 2)
+    plt.figure(figsize=(4.5, 1.2))
     plt.step(t, x)
     plt.xlim((0, 1/omega))
     plt.ylabel('Amplitude')
     plt.xlabel('Time (seconds)')
     plt.title('Step plot')
 
-    plt.subplot(3, 1, 3)
+    plt.figure(figsize=(4.5, 1.2))
     plt.bar(t, x, width=0.003)
     plt.xlim((0, 1/omega))
     plt.ylabel('Amplitude')
     plt.xlabel('Time (seconds)')
     plt.title('Bar plot')
-
-    plt.tight_layout()
 
     # plt.plot is the default command for displaying functions in a continuous way.
     # plt.stem is particularly suitable for emphasizing the discrete time instances.
