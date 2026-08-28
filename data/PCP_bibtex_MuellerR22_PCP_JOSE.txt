@@ -7,5 +7,5 @@
   year      = {2022},
   pages     = {148:1--5},
   doi       = {10.21105/jose.00148},
-  url-demo = {https://github.com/meinardmueller/PCP}
+  url-demo = {https://github.com/groupmm/PCP}
 }

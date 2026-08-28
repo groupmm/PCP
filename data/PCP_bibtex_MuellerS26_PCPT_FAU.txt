@@ -1,0 +1,11 @@
+@book{MuellerS26_PCPT_FAU,
+author    = {Meinard M\"{u}ller and Sebastian Strahl},
+title     = {{PCPT}: {A} Preparation Course in {PyTorch}. {T}hrough the Principles of Signal Processing},
+type      = {Monograph},
+year      = {2026},
+isbn      = {978-3-96147-944-3},
+publisher = {FAU University Press},
+edition   = {1st},
+pages     = {1--229},
+doi       = {10.25593/978-3-96147-945-0}
+}
