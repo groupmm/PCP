@@ -1,176 +1,339 @@
-Unit 4 is now strong, coherent, and educational. I found a few important inconsistencies to correct before finalizing it.
+"""
+Module: libpcp.unit04
+Author: Meinard Mueller, International Audio Laboratories Erlangen
+License: The MIT license, https://opensource.org/licenses/MIT
+This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
+"""
+
+import numpy as np
+
+def exercise_conditional(show_result=True):
+    """Exercise 1: Conditional Number Selection.
+
+    Notebook: PCP_04_control.ipynb
+
+    Args:
+        show_result: If True, display the results.
+    """
+    if not show_result:
+        return
 
-1. Exercise 1 uses three different names
+    def select_number(selection='nan'):
+        """Return a number according to the supplied selection.
 
-The table of contents still says:
+        Args:
+            selection: String specifying the requested number.
+                Default is 'nan'.
+
+        Returns:
+            Selected numerical value.
+        """
+        if selection == 'large':
+            number = 2**100
+        elif selection == 'small':
+            number = 2**(-100)
+        elif selection == 'random':
+            number = np.random.rand()
+        else:
+            number = np.nan
+
+        return number
+
+    print('Default:   ', select_number())
+    print("'large':   ", select_number('large'))
+    print("'small':   ", select_number('small'))
+    print("'random':  ", select_number('random'))
+    print("'Large':   ", select_number('Large'))
+
+def exercise_cumulative_sum(show_result=True):
+    """Exercise 2: Computing a Cumulative Sum.
+
+    Notebook: PCP_04_control.ipynb
+
+    Args:
+        show_result: If True, display the results.
+    """
+    if not show_result:
+        return
+
+    def compute_cumulative_sum(x):
+        """Return the cumulative sums of a one-dimensional array.
+
+        Args:
+            x: One-dimensional NumPy array.
+
+        Returns:
+            NumPy array containing the cumulative sums.
+        """
+        cumulative_values = []
+        running_total = 0
+
+        for value in x:
+            running_total += value
+            cumulative_values.append(running_total)
+
+        return np.array(cumulative_values)
+
+    x = np.array([2, -1, 3, 4])
+
+    result_loop = compute_cumulative_sum(x)
+    result_numpy = np.cumsum(x)
 
-```markdown
-Conditional Function `give_me_a_number`
-```
+    print('Input array:       ', x.tolist())
+    print('Using a loop:      ', result_loop.tolist())
+    print('Using np.cumsum(): ', result_numpy.tolist())
+    print('Results agree:     ', np.array_equal(result_loop, result_numpy))
 
-The exercise asks students to write:
+def exercise_halving(show_result=True):
+    """Exercise 3: Repeated Halving.
 
-```python
-select_number()
-```
+    Notebook: PCP_04_control.ipynb
 
-The imported solution is:
+    Args:
+        show_result: If True, display the results.
+    """
+    if not show_result:
+        return
 
-```python
-exercise_conditional
-```
+    def count_halvings(width, tolerance):
+        """Return the number of halvings and the final width.
 
-The overview also links to the outdated anchor `#exercise_give_number`, while the table of contents uses `#exercise_conditional`.
+        Args:
+            width: Initial positive interval width.
+            tolerance: Positive upper bound for the final width.
 
-I recommend standardizing on:
+        Returns:
+            Number of halvings and final width. If either input is
+            not positive, both returned values are np.nan.
+        """
+        if width <= 0 or tolerance <= 0:
+            return np.nan, np.nan
 
-```html
-<a id="exercise_conditional"></a>
-```
+        num_halvings = 0
 
-```markdown
-Exercise 1: Conditional Number Selection
-```
+        while width > tolerance:
+            width /= 2
+            num_halvings += 1
 
-```python
-select_number()
-exercise_conditional()
-```
+        return num_halvings, width
 
-Change the overview link to:
+    initial_width = 1.0
+    valid_tolerance = 0.01
 
-```html
-<li><a href="#exercise_conditional">Exercise 1</a>: Select numerical values using conditions and a default argument.</li>
-```
+    num_halvings, final_width = count_halvings(
+        initial_width,
+        valid_tolerance,
+    )
 
-2. Two background-box links are inconsistent
+    print('=== Valid input ===')
+    print('Initial width:       ', initial_width)
+    print('Tolerance:           ', valid_tolerance)
+    print('Number of halvings:  ', num_halvings)
+    print('Final width:         ', final_width)
+    print('Tolerance satisfied: ', final_width <= valid_tolerance)
+
+    invalid_tolerance = 0.0
 
-The table of contents lists:
+    invalid_halvings, invalid_width = count_halvings(
+        initial_width,
+        invalid_tolerance,
+    )
 
-```markdown
-Background: Functions as Objects
-```
+    print('\n=== Invalid input ===')
+    print('Initial width:       ', initial_width)
+    print('Tolerance:           ', invalid_tolerance)
+    print('Number of halvings:  ', invalid_halvings)
+    print('Final width:         ', invalid_width)
 
-but no corresponding section with `background_function_object` appears in the supplied unit. There is only a short note after Exercise 5.
+def exercise_isprime(show_result=True):
+    """Exercise 4: Testing Prime Numbers.
 
-Conversely, the new Gauss box appears in the unit but is missing from the table of contents. Add:
+    Notebook: PCP_04_control.ipynb
 
-```markdown
-- [**Background:** Gauss and the Value of a Better Idea](#background_efficiency)
-```
+    Args:
+        show_result: If True, display the results.
+    """
+    if not show_result:
+        return
 
-For “Functions as Objects,” either convert the existing note into the planned green box with
+    def is_prime_basic(n):
+        """Return True if n is prime using basic trial division."""
+        if n < 2:
+            return False
 
-```html
-<a id="background_function_object"></a>
-```
+        for divisor in range(2, n):
+            if n % divisor == 0:
+                return False
+
+        return True
 
-or remove that entry from the table of contents.
+    def is_prime(n):
+        """Return True if n is prime using trial division up to sqrt(n)."""
+        if n < 2:
+            return False
+
+        largest_divisor = int(np.sqrt(n))
+
+        for divisor in range(2, largest_divisor + 1):
+            if n % divisor == 0:
+                return False
+
+        return True
+
+    test_numbers = [1, 17, 1221, 1223]
+
+    print('Primality tests:')
+    for n in test_numbers:
+        basic_result = is_prime_basic(n)
+        improved_result = is_prime(n)
 
-3. The notation introducing the sum contains an error
-
-The text should use \(N\) as the upper limit and \(n\) as the index:
-
-```markdown
-$$
-S(N)=\sum_{n=1}^{N}n=1+2+\cdots+N,
-$$
-
-where $N$ is a positive integer and $n$ is the summation index.
-```
-
-The current text says that `n` is the positive integer, which conflicts with the notation chosen earlier.
-
-4. The bisection tolerance is inconsistent
-
-The exercise currently states a default tolerance of \(10^{-4}\), but the intended value throughout the revision was \(10^{-5}\).
-
-The displayed output confirms that the current solution uses \(10^{-4}\):
-
-* `[0, 2]` takes 15 iterations.
-* `[3, 4]` takes 14 iterations.
-
-With `tolerance=1e-5`, these would normally take 18 and 17 iterations, respectively. Choose one tolerance and use it consistently. I recommend:
-
-```python
-tolerance=1e-5
-```
-
-and:
-
-```markdown
-Set the default value of `tolerance` to $10^{-5}$.
-```
-
-Then regenerate the displayed output.
-
-5. The bisection exercise and solution return different objects
-
-The exercise currently says that `search_root()` returns a root or `np.nan`. The revised solution returns two values:
-
-```python
-root, num_iterations
-```
-
-and returns:
-
-```python
-np.nan, 0
-```
-
-for invalid input.
-
-Since displaying the iteration count is educational and reinforces multiple return values, revise the exercise to say:
-
-> Return both the root approximation and the number of iterations. If the input conditions are invalid, return `np.nan` as the approximation and `0` iterations.
-
-The test calls should then unpack both results.
-
-6. Repeated Halving needs input validation
-
-Exercise 3 warns about an endless loop but does not require positive inputs. Add:
-
-```html
-<li>Check that <code>width &gt; 0</code> and <code>tolerance &gt; 0</code> before starting the loop.</li>
-```
-
-The solution should perform the same check. Otherwise, a nonpositive tolerance can lead to an endless loop after floating-point underflow reduces `width` to zero.
-
-7. The complexity explanation is slightly repetitive
-
-The Gauss box already explains:
-
-* linear complexity,
-* constant complexity,
-* \(\mathcal O(N)\),
-* \(\mathcal O(1)\).
-
-Immediately after the box, the main text explains all four again. Condense the later paragraph to:
-
-> As the background box illustrates, both the Python and NumPy implementations require work that grows as $\mathcal{O}(N)$, while the formula requires $\mathcal{O}(1)$ arithmetic operations. NumPy performs the repeated work more efficiently, whereas the formula reduces the amount of work itself.
-
-8. The root introduction appears damaged in the pasted version
-
-The supplied file contains:
-
-```text
-where $aroot r∈[a,b]
-```
-
-This should be checked in the original notebook. The intended sentence is:
-
-```markdown
-Let $f:\mathbb{R}\to\mathbb{R}$ be continuous on an interval $[a,b]$, where $a<b$. If $f(a)$ and $f(b)$ have opposite signs, then the intermediate value theorem guarantees at least one root $r\in[a,b]$ satisfying $f(r)=0$.
-```
-
-Several other displayed equations appear flattened in the pasted export, such as \(2^{100}\), \(N^{3/2}\), and the summation formula. If they render correctly in the notebook, this may only be an artifact of the exported text.
-
-9. Smaller cleanup items
-
-* `timeit` is imported at the beginning and again before the benchmark. The second import is unnecessary.
-* Write `N = 100_000` instead of `N = 100000` for readability.
-* The two teaser links at the very beginning appear duplicated, and `imagePCP Teaser` is an unusual visible label.
-* The table-of-contents background entries are split into two adjacent links. A single link for each title will be cleaner.
-* The sine example currently prints every bisection step, although the proposed solution intended to show the detailed table only for \(x^2-2\). I would suppress the sine table to keep the output compact.
-
-After these corrections, the unit will be very well balanced. Its progression from branching and loops through functions, efficiency, Gauss, primality testing, and finally bisection is particularly strong.
+        print(
+            f'n = {n:4d}, '
+            f'basic = {basic_result}, '
+            f'improved = {improved_result}'
+        )
+
+    num_primes = 20
+    prime_numbers = []
+    candidate = 2
+
+    while len(prime_numbers) < num_primes:
+        if is_prime(candidate):
+            prime_numbers.append(candidate)
+
+        candidate += 1
+
+    print(f'First {num_primes} prime numbers:')
+    print(prime_numbers)
+
+def exercise_root(show_result=True):
+    """Exercise 5: Root Finding Using the Bisection Method.
+
+    Notebook: PCP_04_control.ipynb
+
+    Args:
+        show_result: If True, display the results.
+    """
+    if not show_result:
+        return
+
+    def quadratic_function(x):
+        """Return the value of f(x) = x**2 - 2."""
+        return x**2 - 2
+
+    def search_root(f, a, b, tolerance=1e-4, show_steps=False):
+        """Approximate a root of a continuous function by bisection.
+
+        Args:
+            f: Continuous real-valued function.
+            a: Left endpoint of the initial interval.
+            b: Right endpoint of the initial interval.
+            tolerance: Maximum width of the final interval.
+                Default is 1e-4.
+            show_steps: If True, display the intermediate intervals.
+
+        Returns:
+            Root approximation and number of iterations. If the input
+            conditions are not satisfied, the root is np.nan.
+        """
+        num_iterations = 0
+
+        if a >= b or tolerance <= 0:
+            return np.nan, num_iterations
+
+        f_a = f(a)
+        f_b = f(b)
+
+        if f_a == 0:
+            return a, num_iterations
+
+        if f_b == 0:
+            return b, num_iterations
+
+        if f_a * f_b > 0:
+            return np.nan, num_iterations
+
+        if show_steps:
+            print(
+                f'{"Iteration":>9} '
+                f'{"a":>9} {"b":>9} {"c":>9} '
+                f'{"f(a)":>10} {"f(b)":>10} {"f(c)":>10}'
+            )
+
+        while b - a > tolerance:
+            c = (a + b) / 2
+            f_c = f(c)
+            num_iterations += 1
+
+            if show_steps:
+                print(
+                    f'{num_iterations:9d} '
+                    f'{a:9.6f} {b:9.6f} {c:9.6f} '
+                    f'{f_a:11.6f} {f_b:11.6f} {f_c:11.6f}'
+                )
+
+            if f_c == 0:
+                return c, num_iterations
+
+            if f_a * f_c < 0:
+                b = c
+                f_b = f_c
+            else:
+                a = c
+                f_a = f_c
+
+        return (a + b) / 2, num_iterations
+
+    print('=== Root of f(x) = x**2 - 2 on [0, 2] ===')
+
+    root_sqrt_two, iterations = search_root(
+        quadratic_function,
+        0,
+        2,
+        show_steps=True,
+    )
+    reference_sqrt_two = np.sqrt(2)
+
+    print(
+        f'Approximation: r = {root_sqrt_two:.6f}, '
+        f'f(r) = {quadratic_function(root_sqrt_two):.3e}'
+    )
+    print(
+        f'Reference:     r = {reference_sqrt_two:.6f}, '
+        f'f(r) = {quadratic_function(reference_sqrt_two):.3e}'
+    )
+    print('Iterations:   ', iterations)
+
+    invalid_sign, _ = search_root(
+        quadratic_function,
+        2,
+        4,
+    )
+    reversed_interval, _ = search_root(
+        quadratic_function,
+        4,
+        2,
+    )
+
+    print('\n=== Invalid input intervals ===')
+    print('Interval [2, 4] without a sign change:', invalid_sign)
+    print('Reversed interval [4, 2]:            ', reversed_interval)
+
+    print('\n=== Root of sin(x) on [3, 4] ===')
+
+    root_sine, iterations = search_root(
+        np.sin,
+        3,
+        4,
+        show_steps=True,
+    )
+
+    print(
+        f'Approximation: r = {root_sine:.6f}, '
+        f'sin(r) = {np.sin(root_sine):.3e}'
+    )
+    print(
+        f'Reference:     r = {np.pi:.6f}, '
+        f'sin(r) = {np.sin(np.pi):.3e}'
+    )
+    print('Iterations:   ', iterations)
