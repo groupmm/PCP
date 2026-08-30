@@ -1,340 +1,176 @@
-"""
-Module: libpcp.unit04
-Author: Meinard Mueller, International Audio Laboratories Erlangen
-License: The MIT license, https://opensource.org/licenses/MIT
-This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
-"""
+Unit 4 is now strong, coherent, and educational. I found a few important inconsistencies to correct before finalizing it.
 
-import numpy as np
+1. Exercise 1 uses three different names
 
+The table of contents still says:
 
-np.random.seed(0)
+```markdown
+Conditional Function `give_me_a_number`
+```
 
-def add(a, b=0, c=0):
-    """Function to add three numbers
+The exercise asks students to write:
 
-    Notebook: PCP_04_control.ipynb
+```python
+select_number()
+```
 
-    Args:
-        a: first number
-        b: second number (Default value = 0)
-        c: third number (Default value = 0)
+The imported solution is:
 
-    Returns:
-        Sum of a, b and c
-    """
-    print('Addition: ', a, ' + ', b, ' + ', c)
-    return a + b + c
+```python
+exercise_conditional
+```
 
+The overview also links to the outdated anchor `#exercise_give_number`, while the table of contents uses `#exercise_conditional`.
 
-def add_and_diff(a, b=0):
-    """Function to add and subtract two numbers
+I recommend standardizing on:
 
-    Notebook: PCP_04_control.ipynb
+```html
+<a id="exercise_conditional"></a>
+```
 
-    Args:
-        a: first number
-        b: second number (Default value = 0)
+```markdown
+Exercise 1: Conditional Number Selection
+```
 
-    Returns:
-        first: a + b
-        second: a - b
-    """
-    return a + b, a - b
+```python
+select_number()
+exercise_conditional()
+```
 
+Change the overview link to:
 
-def sum_n(n):
-    """Function that sums up the integers from 1 to n
+```html
+<li><a href="#exercise_conditional">Exercise 1</a>: Select numerical values using conditions and a default argument.</li>
+```
 
-    Notebook: PCP_04_control.ipynb
+2. Two background-box links are inconsistent
 
-    Args:
-        n: Integer number
+The table of contents lists:
 
-    Returns:
-        s: Sum of integers from 1 to n
-    """
-    s = 0
-    for n in range(1, n+1):
-        s = s + n
-    return s
+```markdown
+Background: Functions as Objects
+```
 
+but no corresponding section with `background_function_object` appears in the supplied unit. There is only a short note after Exercise 5.
 
-def sum_n_numpy(n):
-    """Function that sums up the integers from 1 to n  using numpy
+Conversely, the new Gauss box appears in the unit but is missing from the table of contents. Add:
 
-    Notebook: PCP_04_control.ipynb
+```markdown
+- [**Background:** Gauss and the Value of a Better Idea](#background_efficiency)
+```
 
-    Args:
-        n: Integer number
+For “Functions as Objects,” either convert the existing note into the planned green box with
 
-    Returns:
-        s: Sum of integers from 1 to n
-    """
-    s = np.sum(np.arange(1, n+1))
-    return s
+```html
+<a id="background_function_object"></a>
+```
 
+or remove that entry from the table of contents.
 
-def sum_n_math(n):
-    """Function that sums up the integers from 1 to n using the idea by Gauss
+3. The notation introducing the sum contains an error
 
-    Notebook: PCP_04_control.ipynb
+The text should use \(N\) as the upper limit and \(n\) as the index:
 
-    Args:
-        n: Integer number
+```markdown
+$$
+S(N)=\sum_{n=1}^{N}n=1+2+\cdots+N,
+$$
 
-    Returns:
-        s: Sum of integers from 1 to n
-    """
-    s = n * (n + 1) // 2
-    return s
+where $N$ is a positive integer and $n$ is the summation index.
+```
 
+The current text says that `n` is the positive integer, which conflicts with the notation chosen earlier.
 
-def exercise_give_number(show_result=True):
-    """Exercise 1: Function that provides a specified number
+4. The bisection tolerance is inconsistent
 
-    Notebook: PCP_04_control.ipynb
+The exercise currently states a default tolerance of \(10^{-4}\), but the intended value throughout the revision was \(10^{-5}\).
 
-    Args:
-        show_result: Show result (Default value = True)
-    """
-    if show_result is False:
-        return
+The displayed output confirms that the current solution uses \(10^{-4}\):
 
-    def give_me_a_number(s='nan'):
-        """Function give_me_a_number
+* `[0, 2]` takes 15 iterations.
+* `[3, 4]` takes 14 iterations.
 
-        Notebook: PCP_04_control.ipynb
+With `tolerance=1e-5`, these would normally take 18 and 17 iterations, respectively. Choose one tolerance and use it consistently. I recommend:
 
-        Args:
-            s: string specifying number (Default value = 'nan')
+```python
+tolerance=1e-5
+```
 
-        Returns:
-            number: specified number
-        """
-        if s == 'large':
-            number = 2 ** 100
-        elif s == 'small':
-            number = 2 ** (-100)
-        elif s == 'random':
-            number = np.random.rand()
-        else:
-            number = np.nan
+and:
 
-        return number
+```markdown
+Set the default value of `tolerance` to $10^{-5}$.
+```
 
-    print('default:   ', give_me_a_number())
-    print('s=\'large\': ', give_me_a_number('large'))
-    print('s=\'small\': ', give_me_a_number('small'))
-    print('s=\'random\':', give_me_a_number('random'))
-    print('s=\'test\':  ', give_me_a_number('test'))
+Then regenerate the displayed output.
 
+5. The bisection exercise and solution return different objects
 
-def exercise_row_mean(show_result=True):
-    """Exercise 2: Function for Computing Row Mean
+The exercise currently says that `search_root()` returns a root or `np.nan`. The revised solution returns two values:
 
-    Notebook: PCP_04_control.ipynb
+```python
+root, num_iterations
+```
 
-    Args:
-        show_result: Show result (Default value = True)
-    """
-    if show_result is False:
-        return
+and returns:
 
-    def row_mean(A):
-        """Function that computes the row-wise means of A
+```python
+np.nan, 0
+```
 
-        Notebook: PCP_04_control.ipynb
+for invalid input.
 
-        Args:
-            A: matrix
-
-        Returns:
-            row_mean: Vector containing the row-wise means
-        """
-        row_mean = np.zeros((A.shape[0]))
+Since displaying the iteration count is educational and reinforces multiple return values, revise the exercise to say:
 
-        for i in range(A.shape[1]):
-            row_mean += A[:, i]
+> Return both the root approximation and the number of iterations. If the input conditions are invalid, return `np.nan` as the approximation and `0` iterations.
 
-        row_mean /= A.shape[1]
-        return row_mean
+The test calls should then unpack both results.
 
-    A = np.array([[1, 2, 6], [5, 5, 2]])
-    print('Input matrix:', A, sep='\n')
-    print('Vector containing the row means: ', row_mean(A))
+6. Repeated Halving needs input validation
 
+Exercise 3 warns about an endless loop but does not require positive inputs. Add:
 
-def exercise_odd(show_result=True):
-    """Exercise 3: Function for Computing Odd-Index Vector
+```html
+<li>Check that <code>width &gt; 0</code> and <code>tolerance &gt; 0</code> before starting the loop.</li>
+```
 
-    Notebook: PCP_04_control.ipynb
+The solution should perform the same check. Otherwise, a nonpositive tolerance can lead to an endless loop after floating-point underflow reduces `width` to zero.
 
-    Args:
-        show_result: Show result (Default value = True)
-    """
-    if show_result is False:
-        return
+7. The complexity explanation is slightly repetitive
 
-    def vector_odd_index(x):
-        """Compute Odd-Index Vector
+The Gauss box already explains:
 
-        Notebook: PCP_04_control.ipynb
+* linear complexity,
+* constant complexity,
+* \(\mathcal O(N)\),
+* \(\mathcal O(1)\).
 
-        Args:
-            x: array
+Immediately after the box, the main text explains all four again. Condense the later paragraph to:
 
-        Returns:
-            y: output
-        """
-        if x.ndim > 1:
-            y = None
-        else:
-            y = x[1::2]
-        return y
+> As the background box illustrates, both the Python and NumPy implementations require work that grows as $\mathcal{O}(N)$, while the formula requires $\mathcal{O}(1)$ arithmetic operations. NumPy performs the repeated work more efficiently, whereas the formula reduces the amount of work itself.
 
-    x1 = np.arange(0, 10)
-    x2 = x1.reshape(1, -1)
-    x3 = np.array([[1, 2, 3], [4, 5, 6]])
-    print('x =', x1)
-    print('y =', vector_odd_index(x1))
-    print('x =', x2)
-    print('y =', vector_odd_index(x2))
-    print('x =', x3, sep='\n')
-    print('y =', vector_odd_index(x3))
-
-
-def exercise_isprime(show_result=True):
-    """Exercise 4: Primality Test
-
-    Notebook: PCP_04_control.ipynb
-
-    Args:
-        show_result: Show result (Default value = True)
-    """
-    if show_result is False:
-        return
-
-    def isprime(n):
-        """Function that tests if number is prime
-
-        Notebook: PCP_04_control.ipynb
-
-        Args:
-            n: Integer
-
-        Returns:
-           Boolean value
-        """
-        if n < 2:
-            return False
-        for i in range(2, n):
-            remainder = np.mod(n, i)
-            if remainder == 0:
-                return False
-        return True
-
-    for n in [1, 17, 1221, 1223]:
-        print(f'n = {n}, isprime = {isprime(n)}')
-
-    num_max = 20
-    counter = 0
-    n = 1
-
-    print(f'List of first {num_max} prime numbers:')
-    while counter < num_max:
-        n += 1
-        result = isprime(n)
-        if result is True:
-            counter += 1
-            print(n, end=' ')
-
-
-def exercise_root(show_result=True):
-    """Exercise 5: Function for Root Finding
-
-    Notebook: PCP_04_control.ipynb
-
-    Args:
-        show_result: Show result (Default value = True)
-    """
-    if show_result is False:
-        return
-
-    def f(x):
-        """A continuous function
-
-        Notebook: PCP_04_control.ipynb
-
-        Args:
-            x: array or float
-
-        Returns:
-            f(x) = x**2-2
-        """
-        return x**2-2
-
-    def search_root(f, a, b, thresh=10**(-5)):
-        """Function that searches a root of f in a given interval [a,b] using interval halving procedure
-
-        Notebook: PCP_04_control.ipynb
-
-        Args:
-            f: Function
-            a: Interval start
-            b: Interval end
-            thresh: Threshold for stopping search (Default value = 10**(-5))
-
-        Returns:
-            Found root or None (in case initial condition is not fulfilled)
-        """
-        if a >= b:
-            print(f'a = {a:.6f}, b = {b:.6f}')
-            print('Interval not valid.')
-            return np.nan
-        elif f(a)*f(b) > 0:
-            print(f'a={a:.6f}, b={b:.6f}, f(a)={f(a):.6f}, f(b)={f(b):.6f}')
-            print('Sign condition not fulfilled')
-            return np.nan
-        else:
-            while 1:
-                c = (a + b) / 2
-                f_c = f(c)
-                f_a = f(a)
-                f_b = f(b)
-
-                print(f'a={a:.6f}, b={b:.6f}, c={c:.6f}, f(a)={f_a:.6f}, f(b)={f_b:.6f}, f(c)={f_c:.6f}')
-
-                # check if we have already found a root
-                if f_a == 0:
-                    return a
-                elif f_b == 0:
-                    return b
-                elif f_c == 0:
-                    return c
-
-                # Check sign condition and define new interval
-                if f(a)*f(c) < 0:
-                    b = c
-                else:
-                    a = c
-                if b-a < thresh:
-                    return c
-
-    print('=== Function f(x) = x**2-2 ===')
-    r = search_root(f, 0, 2)
-    print(f'Root r = {r:.6f}, f(r) = {f(r):.6f}')
-    # Root r = 1.414207, f(r) = -0.000017
-
-    print('\n=== Function f(x) = x**2-2 ===')
-    r = search_root(f, 2, 4)
-    print(f'Root r = {r:.6f}, f(r) = {f(r):.6f}')
-
-    print('\n=== Function f(x) = x**2-2 ===')
-    r = search_root(f, 4, 2)
-    print(f'Root r = {r:.6f}, f(r) = {f(r):.6f}')
-
-    print('\n=== Function f(x) = sin(x) ===')
-    r = search_root(np.sin, 3, 4)
-    print(f'Root r = {r:.6f}, sin(r) = {np.sin(r):.6f}')
-    # Root r = 3.141594, sin(r) = -0.000001
+8. The root introduction appears damaged in the pasted version
+
+The supplied file contains:
+
+```text
+where $aroot r∈[a,b]
+```
+
+This should be checked in the original notebook. The intended sentence is:
+
+```markdown
+Let $f:\mathbb{R}\to\mathbb{R}$ be continuous on an interval $[a,b]$, where $a<b$. If $f(a)$ and $f(b)$ have opposite signs, then the intermediate value theorem guarantees at least one root $r\in[a,b]$ satisfying $f(r)=0$.
+```
+
+Several other displayed equations appear flattened in the pasted export, such as \(2^{100}\), \(N^{3/2}\), and the summation formula. If they render correctly in the notebook, this may only be an artifact of the exported text.
+
+9. Smaller cleanup items
+
+* `timeit` is imported at the beginning and again before the benchmark. The second import is unnecessary.
+* Write `N = 100_000` instead of `N = 100000` for readability.
+* The two teaser links at the very beginning appear duplicated, and `imagePCP Teaser` is an unusual visible label.
+* The table-of-contents background entries are split into two adjacent links. A single link for each title will be cleaner.
+* The sine example currently prints every bisection step, although the proposed solution intended to show the detailed table only for \(x^2-2\). I would suppress the sine table to keep the output compact.
+
+After these corrections, the unit will be very well balanced. Its progression from branching and loops through functions, efficiency, Gauss, primality testing, and finally bisection is particularly strong.
