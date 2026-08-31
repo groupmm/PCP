@@ -292,10 +292,12 @@ def exercise_erlangen(show_result=True):
     plt.subplot(3, 2, 6)
     plt.imshow(image_downsampled)
     plt.title('Every Tenth Pixel')
+    
+    image_modified = red_channel
 
     # The output directory must already exist
     mpimg.imsave(
         './output/PCP_fig_erlangen_mod.png',
-        red_channel,
+        image_modified,
         cmap='hot',
     )
