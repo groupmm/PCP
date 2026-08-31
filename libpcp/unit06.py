@@ -12,162 +12,158 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
 
-def generate_figure(figsize=(4.5, 2.0), xlim=[0, 1], ylim=[0, 1]):
-    """Generate figure for plotting complex numbers
-
-    Notebook: PCP_06_complex.ipynb
+def create_complex_plane(figsize=(4.5, 2),
+                         xlim=(0, 1), ylim=(0, 1)):
+    """Create a figure for visualizing complex numbers.
 
     Args:
-       figsize: Width, height in inches (Default value = (2, 2))
-       xlim: Limits for x-axis (Default value = [0, 1])
-       ylim: Limits for y-axis (Default value = [0, 1])
+        figsize: Figure width and height in inches.
+        xlim: Limits of the real axis.
+        ylim: Limits of the imaginary axis.
     """
-    plt.figure(figsize=figsize)
-    plt.grid()
+    plt.figure(figsize=figsize, layout='tight')
     plt.xlim(xlim)
     plt.ylim(ylim)
-    plt.xlabel(r'$\mathrm{Re}$')
-    plt.ylabel(r'$\mathrm{Im}$')
+    plt.xlabel(r'$\operatorname{Re}$')
+    plt.ylabel(r'$\operatorname{Im}$')
+    plt.grid(alpha=0.3)
+    plt.gca().set_axisbelow(True) 
 
 
-def plot_vector(c, color='k', start=0, linestyle='-'):
-    """Plot arrow corresponding to difference of two complex numbers
-
-    Notebook: PCP_06_complex.ipynb
+def plot_complex_vector(c, start=0, color='black', linestyle='-'):
+    """Plot the complex vector c beginning at start.
 
     Args:
-        c: Complex number
-        color: Color of arrow (Default value = 'k')
-        start: Complex number encoding the start position (Default value = 0)
-        linestyle: Linestyle of arrow (Default value = '-')
+        c: Complex number representing the vector.
+        start: Complex number representing its starting point.
+        color: Arrow color.
+        linestyle: Arrow line style.
 
     Returns:
-        plt.arrow: matplotlib.patches.FancyArrow
+        Created Matplotlib arrow.
     """
-    return plt.arrow(np.real(start), np.imag(start), np.real(c), np.imag(c),
-                     linestyle=linestyle, head_width=0.05,
-                     fc=color, ec=color, overhang=0.3, length_includes_head=True)
+    return plt.arrow(
+        np.real(start), np.imag(start),
+        np.real(c), np.imag(c),
+        color=color, linestyle=linestyle,
+        head_width=0.05, overhang=0.3,
+        length_includes_head=True,
+        zorder=3,        
+    )
 
 
-def plot_polar_vector(c, label=None, color=None, start=0, linestyle='-'):
-    """Plot arrow in polar plot
+def exercise_rotate(show_result=True):
+    """Exercise 1: Rotating Complex Numbers.
 
     Notebook: PCP_06_complex.ipynb
 
     Args:
-        c: Complex number
-        label: Label of arrow (Default value = None)
-        color: Color of arrow (Default value = None)
-        start: Complex number encoding the start position (Default value = 0)
-        linestyle: Linestyle of arrow (Default value = '-')
+        show_result: If True, display the resulting figures.
     """
-    # plot line in polar plane
-    line = plt.polar([np.angle(start), np.angle(c)], [np.abs(start), np.abs(c)], label=label,
-                     color=color, linestyle=linestyle)
-    # plot arrow in same color
-    this_color = line[0].get_color() if color is None else color
-    plt.annotate('', xytext=(np.angle(start), np.abs(start)), xy=(np.angle(c), np.abs(c)),
-                 arrowprops=dict(facecolor=this_color, edgecolor='none',
-                                 headlength=12, headwidth=10, shrink=1, width=0))
-
-
-def exercise_complex(show_result=True):
-    """Exercise 1: Rotate Complex Number
-
-    Notebook: PCP_06_complex.ipynb
-
-    Args:
-        show_result: Show result (Default value = True)
-    """
-    if show_result is False:
+    if not show_result:
         return
 
-    c_abs = 1.2
-    c_angle = 20  # in degree
-    c_angle_rad = np.deg2rad(c_angle)
-    a = c_abs * np.cos(c_angle_rad)
-    b = c_abs * np.sin(c_angle_rad)
-    c = a + b*1j
-    c_conj = np.conj(c)
-    c_inv = 1 / c
-    generate_figure(xlim=[-0.25, 1.75], ylim=[-0.5, 0.5])
-    v1 = plot_vector(c, color='k')
-    v2 = plot_vector(c_conj, color='b')
-    v3 = plot_vector(c_inv, color='r')
-    plt.legend([v1, v2, v3], ['$c$', r'$\overline{c}$', '$c^{-1}$'])
+    # Construct c from its modulus and argument
+    modulus = 1.2
+    angle_degrees = 20
+    angle = np.deg2rad(angle_degrees)
+    c = modulus * (np.cos(angle) + 1j * np.sin(angle))
 
-    def rotate_complex(c, r):
-        """Rotate complex number
+    c_conjugate = np.conj(c)
+    c_inverse = 1 / c
 
-        Notebook: PCP_06_complex.ipynb
+    #print(f'c:               {c}')
+    #print(f'conjugate:       {c_conjugate}')
+    #print(f'inverse:         {c_inverse}')
+
+    create_complex_plane(figsize=(3.5, 2), xlim=(-0.1, 1.7), ylim=(-0.6, 0.6))
+
+    v1 = plot_complex_vector(c, color='black')
+    v2 = plot_complex_vector(c_conjugate, color='blue')
+    v3 = plot_complex_vector(c_inverse, color='red')
+
+    plt.title('Complex Number, Conjugate, and Inverse')
+    plt.legend([v1, v2, v3],
+               ['$c$', r'$\overline{c}$', '$c^{-1}$'])
+
+    def rotate_complex(c, angle_degrees):
+        """Rotate a complex number clockwise.
 
         Args:
-            c: Complex number
-            r: Angle in degrees
-        """
-        c_angle_rad = np.angle(c) - np.deg2rad(r)
-        c_abs = np.abs(c)
-        a = c_abs * np.cos(c_angle_rad)
-        b = c_abs * np.sin(c_angle_rad)
-        c_rot = a + b*1j
-        return c_rot
+            c: Complex number to rotate.
+            angle_degrees: Clockwise rotation angle in degrees.
 
-    c = 1 + 0.5*1j
-    generate_figure(xlim=[-0.25, 1.75], ylim=[-0.25, 0.75])
-    v1 = plot_vector(c, color='k')
-    v2 = plot_vector(rotate_complex(c, 10), color='b')
-    v3 = plot_vector(rotate_complex(c, 20), color='g')
-    v4 = plot_vector(rotate_complex(c, 30), color='r')
-    plt.legend([v1, v2, v3, v4], ['$c$', '$r=10$', '$r=20$', '$r=30$'])
+        Returns:
+            Rotated complex number.
+        """
+        angle = np.deg2rad(angle_degrees)
+        rotation = np.cos(angle) - 1j * np.sin(angle)
+        return c * rotation
+
+    # Rotate c clockwise by several angles
+    c = 1 + 0.5j
+    angles = [15, 30, 45]
+    colors = ['blue', 'green', 'red']
+
+    create_complex_plane(figsize=(3.5, 2), xlim=(-0.1, 1.7), ylim=(-0.6, 0.6))
+    handles = [plot_complex_vector(c, color='black')]
+
+    for angle, color in zip(angles, colors):
+        c_rotated = rotate_complex(c, angle)
+        handles.append(plot_complex_vector(c_rotated, color=color))
+        #print(f'Rotation by {angle:2d}°: {c_rotated}, '
+        #      f'|c| = {np.abs(c_rotated):.6f}')
+
+    labels = ['$c$', '$15^\\circ$', '$30^\\circ$', '$45^\\circ$']
+    plt.title('Clockwise Rotations')
+    plt.legend(handles, labels);
 
 
 def exercise_polynomial(show_result=True):
-    """Exercise 2: Roots of Polynomial
+    """Exercise 2: Visualizing Polynomial Roots.
 
     Notebook: PCP_06_complex.ipynb
 
     Args:
-        show_result: Show result (Default value = True)
+        show_result: If True, display the resulting figure.
     """
-    if show_result is False:
+    if not show_result:
         return
 
-    def vis_root(p, ax, title=''):
-        """Visualize roots of polynomial
-
-        Notebook: PCP_06_complex.ipynb
+    def visualize_roots(p, ax, title=''):
+        """Compute and visualize the roots of a polynomial.
 
         Args:
-            p: Polynomial coefficients
-            ax: Axis handle
-            title: Plot title (Default value = '')
+            p: Polynomial coefficients in descending order of powers.
+            ax: Matplotlib axis used for the visualization.
+            title: Subplot title.
         """
-        poly_root = np.roots(p)
-        ax.scatter(np.real(poly_root), np.imag(poly_root), color='red', s=20)
-        ax.grid()
+        roots = np.roots(p)
+        ax.scatter(np.real(roots), np.imag(roots), color='red', s=20)
         ax.set_title(title)
-        ax.set_xlabel(r'$\mathrm{Re}$')
-        ax.set_ylabel(r'$\mathrm{Im}$')
+        ax.set_xlabel(r'$\operatorname{Re}$')
+        ax.set_ylabel(r'$\operatorname{Im}$')
+        ax.grid(alpha=0.3)
 
-    fig, ax = plt.subplots(3, 2, figsize=(5, 7))
+    polynomials = [
+        (np.array([1, 0, -2]),
+         '$p(z)=z^2-2$'),
+        (np.array([1, 0, 2]),
+         '$p(z)=z^2+2$'),
+        (np.array([1, 0, 0, 0, 0, 0, 0, 0, -1]),
+         '$p(z)=z^8-1$'),
+        (np.array([1, 1, 1, 0, 0, 0, 0, 0, 0]),
+         '$p(z)=z^8+z^7+z^6$'),
+        (np.array([1, 1, 1, 0, 0, 0, 0, 0, 1e-6]),
+         '$p(z)=z^8+z^7+z^6+10^{-6}$'),
+        (np.array([1, 1-2j, 0, 3]),
+         '$p(z)=z^3+(1-2i)z^2+3$'),
+    ]
 
-    p = np.array([1, 0, -2])
-    vis_root(p, ax[0, 0], title='$p(z)=z^2-2$')
+    fig, axes = plt.subplots(2, 3, figsize=(6.4, 4.2))
 
-    p = np.array([1, 0, 2])
-    vis_root(p, ax[0, 1], title='$p(z)=z^2+2$')
-
-    p = np.array([1, 0, 0, 0, 0, 0, 0, 0, -1])
-    vis_root(p, ax[1, 0], '$p(z)=z^8-1$')
-
-    p = np.array([1, 1, 1, 0, 0, 0, 0, 0, 0])
-    vis_root(p, ax[1, 1], '$p(z)=z^8 + z^7 + z^6$')
-
-    p = np.array([1, 1, 1, 0, 0, 0, 0, 0, 0.000001])
-    vis_root(p, ax[2, 0], '$p(z)=z^8 + z^7 + z^6 + 0.000001$')
-
-    p = np.array([1, -2j, 2 + 4j, 3])
-    vis_root(p, ax[2, 1], '$p(z)=z^3 -2iz^2 + (2+4i)z + 3 $')
+    for ax, (p, title) in zip(axes.flat, polynomials):
+        visualize_roots(p, ax, title)
 
     plt.tight_layout()
 
