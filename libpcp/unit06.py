@@ -6,11 +6,8 @@ This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
 """
 
 import os
-import warnings
 import numpy as np
 from matplotlib import pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap
-
 
 def create_complex_plane(figsize=(4.5, 2),
                          xlim=(0, 1), ylim=(0, 1)):
@@ -169,96 +166,129 @@ def exercise_polynomial(show_result=True):
 
 
 def exercise_mandelbrot(show_result=True):
-    """Exercise 3: Mandelbrot Set
+    """Exercise 3: Approximating the Mandelbrot Set.
 
     Notebook: PCP_06_complex.ipynb
 
     Args:
-        show_result: Show result (Default value = True)
+        show_result: If True, display the resulting figure.
     """
-    if show_result is False:
+    if not show_result:
         return
 
-    a_min = -2
-    a_max = 1
-    b_min = -1.2
-    b_max = 1.2
-    a_delta = 0.01
-    b_delta = 0.01
+    def approximate_mandelbrot(a_range=(-2, 1), b_range=(-1.2, 1.2),
+                               spacing=0.01, max_iterations=100):
+        """Approximate the Mandelbrot set on a rectangular grid.
 
-    A, B = np.meshgrid(np.arange(a_min, a_max+a_delta, a_delta),
-                       np.arange(b_min, b_max+b_delta, b_delta))
-    M = A.shape[0]
-    N = A.shape[1]
-    C = A + B*1j
+        Args:
+            a_range: Minimum and maximum real coordinates.
+            b_range: Minimum and maximum imaginary coordinates.
+            spacing: Spacing between neighboring grid points.
+            max_iterations: Maximum number of iterations per point.
 
-    iter_max = 50
-    thresh = 100
-    mandel = np.ones((M, N))
+        Returns:
+            Real coordinates, imaginary coordinates, and indicator array.
+        """
+        a = np.arange(a_range[0], a_range[1] + spacing / 2, spacing)
+        b = np.arange(b_range[0], b_range[1] + spacing / 2, spacing)
+        A, B = np.meshgrid(a, b)
+        C = A + 1j * B
 
-    for m in range(M):
-        for n in range(N):
-            c = C[m, n]
-            z = 0
-            for k in range(iter_max):
-                z = z * z + c
-                if np.abs(z) > thresh:
-                    mandel[m, n] = 0
-                    break
+        indicator = np.ones(C.shape, dtype=int)
 
-    plt.figure(figsize=(6.1, 4))
-    extent = [a_min, a_max, b_min, b_max]
-    plt.imshow(mandel, origin='lower', cmap='gray_r', extent=extent)
-    plt.tight_layout()
+        for m in range(C.shape[0]):
+            for n in range(C.shape[1]):
+                c = C[m, n]
+                z = 0
+
+                for _ in range(max_iterations):
+                    z = z**2 + c
+
+                    if abs(z) > 2:
+                        indicator[m, n] = 0
+                        break
+
+        return a, b, indicator
+
+    a, b, indicator = approximate_mandelbrot()
+
+    coordinate_extent = [a[0], a[-1], b[0], b[-1]]
+
+    plt.figure(figsize=(6.1, 4), layout='tight')
+    plt.imshow(
+        indicator,
+        cmap='gray_r',
+        origin='lower',
+        extent=coordinate_extent,
+        interpolation='nearest',
+    )
+    plt.title('Approximation of the Mandelbrot Set')
+    plt.xlabel(r'$\operatorname{Re}(c)$')
+    plt.ylabel(r'$\operatorname{Im}(c)$');
 
 
 def exercise_mandelbrot_fancy(show_result=True, save_file=False):
-    """Exercise 3: Mandelbrot Set (more fancy version)
+    """Exercise 3: Colored approximation of the Mandelbrot set.
 
     Notebook: PCP_06_complex.ipynb
 
     Args:
-        show_result: Show result (Default value = True)
-        save_file: Save figure to .png (Default value = False)
+        show_result: If True, display the resulting figure.
+        save_file: If True, save the figure as a PNG file.
     """
-    if show_result is False:
+    if not show_result:
         return
 
-    a_min = -2
-    a_max = 1
-    b_min = -1.2
-    b_max = 1.2
-    a_delta = 0.005
-    b_delta = 0.005
+    # Coordinate grid
+    a_min, a_max = -2, 1
+    b_min, b_max = -1.2, 1.2
+    spacing = 0.005
 
-    A, B = np.meshgrid(np.arange(a_min, a_max+a_delta, a_delta),
-                       np.arange(b_min, b_max+b_delta, b_delta))
-    M = A.shape[0]
-    N = A.shape[1]
-    C = A + B*1j
+    a = np.arange(a_min, a_max + spacing / 2, spacing)
+    b = np.arange(b_min, b_max + spacing / 2, spacing)
+    A, B = np.meshgrid(a, b)
+    C = A + 1j * B
 
-    iter_max = 100
-    thresh = 1000
-    mandel_iter = np.zeros((M, N))
+    # Escape-time iteration
+    max_iterations = 100
+    Z = np.zeros(C.shape, dtype=complex)
+    active = np.ones(C.shape, dtype=bool)
+    escape_iteration = np.zeros(C.shape)
 
-    warnings.filterwarnings('ignore')
-    Z = np.zeros((M, N))
-    for k in range(iter_max):
-        Z = Z * Z + C
-        ind = (np.abs(Z) > thresh)
-        mandel_iter[ind] = k
-        Z[ind] = np.nan
+    for k in range(max_iterations):
+        Z[active] = Z[active]**2 + C[active]
+        escaped = active & (np.abs(Z) > 2)
+        escape_iteration[escaped] = k + 2
+        active[escaped] = False
 
-    Z[np.isnan(Z)] = thresh
-    mandel = (np.abs(Z) < thresh).astype(int)
+    # Apply logarithmic escape-time coloring
+    color_values = np.log(np.maximum(escape_iteration, 2))
+    color_values = np.ma.array(color_values, mask=active)
 
-    color_wb = LinearSegmentedColormap.from_list('color_wb', [[1, 1, 1, 0], [0, 0, 0, 1]], N=2)
+    colormap = plt.get_cmap('YlOrBr_r').copy()
+    colormap.set_bad('black')
 
-    plt.figure(figsize=(6.1, 4))
-    extent = [a_min, a_max, b_min, b_max]
-    plt.imshow(np.log(np.log(mandel_iter)), origin='lower', cmap='YlOrBr_r', extent=extent)
-    plt.imshow(mandel, origin='lower', cmap=color_wb, extent=extent)
-    plt.tight_layout()
-    if save_file is True:
-        output_path_filename = os.path.join('.', 'output', 'Mandelbrot.png')
-        plt.savefig(output_path_filename)
+    #color_min = np.log(2)
+    #color_max =np.log(max_iterations + 1)
+    # Select color limits for a visually balanced image
+    color_min = 1.2
+    color_max = 3.3
+    coordinate_extent = [a_min, a_max, b_min, b_max]
+
+    plt.figure(figsize=(6.1, 4), layout='tight')
+    plt.imshow(
+        color_values,
+        cmap=colormap,
+        origin='lower',
+        extent=coordinate_extent,
+        interpolation='nearest',
+        vmin=color_min,
+        vmax=color_max,
+    )
+    plt.title('Mandelbrot Set with Escape-Time Coloring')
+    plt.xlabel(r'$\operatorname{Re}(c)$')
+    plt.ylabel(r'$\operatorname{Im}(c)$')
+
+    if save_file:
+        output_path = os.path.join('.', 'output', 'Mandelbrot.png')
+        plt.savefig(output_path)

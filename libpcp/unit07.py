@@ -8,7 +8,7 @@ This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
 import numpy as np
 from matplotlib import pyplot as plt
 from math import gcd
-from libpcp.unit06 import plot_vector
+#from libpcp.unit06 import plot_vector
 
 
 def exp_approx_Euler(x_min=0, x_max=2, x_delta=0.01, f_0=1):
