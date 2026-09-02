@@ -83,127 +83,204 @@ def plot_root_unity(N, ax):
 
 
 def exercise_approx_exp(show_result=True):
-    """Exercise 1: Approximation of Exponential Function via Power Series
+    """Exercise 1: Comparing approximations of the exponential function.
 
     Notebook: PCP_07_exp.ipynb
 
     Args:
-        show_result: Show result (Default value = True)
+        show_result: If True, display the results.
     """
-    if show_result is False:
+    if not show_result:
         return
 
     def exp_power_series(z, N):
-        """Compute power series for exponential function
+        """Approximate exp(z) using the first N+1 series terms."""
+        value = 1.0
+        term = 1.0
 
-        Notebook: PCP_07_exp.ipynb
+        for n in range(1, N + 1):
+            term *= z / n
+            value += term
 
-        Args:
-            z: Number
-            N: Argument
-
-        Returns:
-            exp_z: Approximation of exponential function
-        """
-        exp_z = 1.0
-        z_power = 1.0
-        nfac = 1.0
-        for n in range(1, N+1):
-            nfac *= n
-            z_power *= z
-            exp_z += z_power / nfac
-        return exp_z
+        return value
 
     def exp_limit_compound(z, N):
-        """Compute power series for exponential function
+        """Approximate exp(z) using the compounding limit."""
+        return (1 + z / N)**N
 
-        Notebook: PCP_07_exp.ipynb
+    # Test several real and complex inputs
+    for z in [1, -1, 1j * np.pi, 1 + 1j]:
+        exact = np.exp(z)
+        print(f'\nz = {z}, np.exp(z) = {exact:.8f}')
 
-        Args:
-            z: Number
-            N: Argument
+        for N in [10, 100]:
+            series = exp_power_series(z, N)
+            compound = exp_limit_compound(z, N)
+            print(
+                f'N = {N:3d}: series = {series:.8f}, '
+                f'compound = {compound:.8f}'
+            )
 
-        Returns:
-            exp_z: Approximation of exponential function
-        """
-        exp_z = (1 + z / N) ** N
-        return exp_z
+    # Compare the approximation errors
+    z = 1 + 1j
+    N_values = np.arange(1, 26)
+    exact = np.exp(z)
 
-    z = 1
-    print(f'Input argument z = {z:.0f}')
-    for n in np.array([1, 2, 4, 8, 16, 32]):
-        z0 = np.exp(z)
-        z1 = exp_power_series(z, n)
-        z2 = exp_limit_compound(z, n)
-        print(f'N={n:3d}, Numpy={z0:.10f}, Approx1={z1:.10f}, Approx2={z2:.10f}')
+    error_series = np.array([
+        abs(exp_power_series(z, N) - exact) for N in N_values
+    ])
+    error_compound = np.array([
+        abs(exp_limit_compound(z, N) - exact) for N in N_values
+    ])
 
-    print('')
-    z = 2 + 0.7*1j
-    print(f'Input argument z = ({z.real:1.1f}, {z.imag:1.1f})')
-    for n in np.array([1, 2, 4, 8, 16, 32, 64, 128, 256, 512]):
-        z0 = np.exp(z)
-        z1 = exp_power_series(z, n)
-        z2 = exp_limit_compound(z, n)
-        print(f'N={n:3d}, Numpy=({z0.real:2.4f}, {z0.imag:2.4f}), Approx1=({z1.real:2.4f}, {z1.imag:2.4f}), Approx2=({z2.real:2.4f}, {z2.imag:2.4f})')
+    # Avoid zero values on the logarithmic axis
+    precision = np.finfo(float).eps
+    error_series = np.maximum(error_series, precision)
+    error_compound = np.maximum(error_compound, precision)
 
+    plots = [
+        ('linear', 'Linear Scale'),
+        ('log', 'Logarithmic Scale'),
+    ]
+
+    fig, axes = plt.subplots(
+        1, 2, figsize=(6.2, 2.2), layout='tight'
+    )
+
+    for ax, (scale, title) in zip(axes, plots):
+        ax.plot(N_values, error_series, 'ro-', markersize=3,
+                label='Power series')
+        ax.plot(N_values, error_compound, 'ko-', markersize=3,
+                label='Compounding limit')
+        ax.set_yscale(scale)
+        ax.set_xlim(1, 25)
+        ax.set_xticks([1, 5, 10, 15, 20, 25])
+        ax.set_title(title)
+        ax.set_xlabel('$N$')
+        ax.set_ylabel('Absolute error')
+        ax.grid(which='both', alpha=0.3)
+
+    axes[0].legend();
+    plt.show()
+    print(
+        '\nFor sufficiently large N, a displayed error may stop decreasing because'
+        '\nfloating-point precision has been reached. Such a plateau reflects a'
+        '\nlimitation of the numerical computation rather than a failure of the'
+        '\nunderlying mathematical approximation.'        
+    )    
+    
 
 def exercise_gaussian(show_result=True):
-    """Exercise 2: Gaussian Function
+    """Exercise 2: Exploring the Gaussian function.
 
     Notebook: PCP_07_exp.ipynb
 
     Args:
-        show_result: Show result (Default value = True)
+        show_result: If True, display the resulting figure.
     """
-    if show_result is False:
+    if not show_result:
         return
 
-    def compute_gaussian_1D(X, mu=0, sigma=1):
-        """Compute Gaussian function
-
-        Notebook: PCP_07_exp.ipynb
+    def compute_gaussian_1D(x, mu=0, sigma=1):
+        """Evaluate a Gaussian function pointwise.
 
         Args:
-            X: array
-            mu: Expected value (Default value = 0)
-            sigma: Variance (Default value = 1)
+            x: NumPy array of input values.
+            mu: Mean.
+            sigma: Standard deviation.
 
         Returns:
-            Y: Gaussian
+            Gaussian function values.
         """
-        Y = 1 / (sigma * np.sqrt(2 * np.pi)) * np.exp((-1 / 2) * (((X - mu) / sigma) ** 2))
-        return Y
+        return (
+            np.exp(-0.5 * ((x - mu) / sigma)**2)
+            / (sigma * np.sqrt(2 * np.pi))
+        )
 
-    x_min = -8
-    x_max = 8
-    x_delta = 0.01
-    x = np.arange(x_min, x_max+x_delta, x_delta)
+    x = np.linspace(-5, 5, 1001)
+    colors = ['blue', 'black', 'red']
 
-    plt.figure(figsize=(6.2, 2.5))
-    plt.xlim([x_min, x_max])
-    plt.ylim([0, 0.6])
-    y1 = compute_gaussian_1D(x, mu=0, sigma=1)
-    plt.plot(x, y1, 'r')
+    fig, axes = plt.subplots(
+        1, 2, figsize=(6.2, 2.3), layout='tight', sharey=True
+    )
 
-    y2 = compute_gaussian_1D(x, mu=-3, sigma=1.5)
-    plt.plot(x, y2, 'b')
+    # Compare different centers
+    for mu, color in zip([-2, 0, 2], colors):
+        axes[0].plot(
+            x, compute_gaussian_1D(x, mu=mu, sigma=1),
+            color=color, label=rf'$\mu={mu},\ \sigma=1$',
+        )
 
-    y3 = compute_gaussian_1D(x, mu=+5, sigma=1)
-    plt.plot(x, y3, 'k')
+    # Compare different widths
+    for sigma, color in zip([0.5, 1, 2], colors):
+        axes[1].plot(
+            x, compute_gaussian_1D(x, mu=-1, sigma=sigma),
+            color=color, label=rf'$\mu=-1,\ \sigma={sigma}$',
+        )
 
-    y4 = compute_gaussian_1D(x, mu=2, sigma=0.8)
-    plt.plot(x, y4, 'g')
+    for ax, title in zip(
+        axes, ['Varying the Mean', 'Varying the Standard Deviation']
+    ):
+        ax.set_xlim(-5, 5)
+        ax.set_xlabel('$x$')
+        ax.set_title(title)
+        ax.grid(alpha=0.3)
+        ax.legend()
 
-    plt.legend([r'$\mu=0, \sigma=1$', r'$\mu=-3, \sigma=1.5$', r'$\mu=5, \sigma=1$', r'$\mu=2, \sigma=0.8$'],
-               loc='upper left', framealpha=1)
-    plt.xlim([x_min, x_max])
-    plt.grid()
-    plt.title('Different Gaussian functions')
-
-    plt.tight_layout()
+    axes[0].set_ylabel('$g(x)$');
 
 
 def exercise_spiral(show_result=True):
+    """Exercise 3: Generating complex spirals.
+
+    Notebook: PCP_07_exp.ipynb
+
+    Args:
+        show_result: If True, display the resulting figure.
+    """
+    if not show_result:
+        return
+
+    def generate_spiral(rad_start=0.5, rad_end=2, num_rot=3,
+                        angle_start=0, N=151):
+        """Generate a spiral represented by complex numbers."""
+        rotations = np.linspace(0, num_rot, N)
+        radius = np.linspace(rad_start, rad_end, N)
+        angle = 2 * np.pi * rotations + np.deg2rad(angle_start)
+        return radius * np.exp(1j * angle)
+
+    def plot_spiral(ax, spiral, rad_end, title):
+        """Plot a complex spiral."""
+        limit = 1.1 * rad_end
+        ax.plot(spiral.real, spiral.imag)
+        ax.set(
+            xlim=(-limit, limit), ylim=(-limit, limit),
+            xlabel=r'$\operatorname{Re}$',
+            ylabel=r'$\operatorname{Im}$',
+            title=title, aspect='equal',
+        )
+        ax.grid(alpha=0.3)
+
+    examples = [
+        (0.2, 1.0, 2, 0, 101),
+        (0.2, 1.5, 3.25, 180, 201),
+        (0.5, 2.0, 6, 90, 301),
+    ]
+
+    fig, axes = plt.subplots(
+        1, 3, figsize=(6.2, 2.4), layout='tight'
+    )
+
+    for ax, parameters in zip(axes, examples):
+        rad_start, rad_end, num_rot, angle_start, N = parameters
+        spiral = generate_spiral(*parameters)
+        title = (
+            f'{num_rot} rotations, start {angle_start}°\n'
+            rf'$r:{rad_start}\rightarrow{rad_end}$'
+        )
+        plot_spiral(ax, spiral, rad_end, title)
+
+def exercise_spiral2(show_result=True):
     """Exercise 3: Spiral Generation
 
     Notebook: PCP_07_exp.ipynb
