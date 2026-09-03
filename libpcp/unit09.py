@@ -8,48 +8,23 @@ This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
 import numpy as np
 from matplotlib import pyplot as plt
 
-
-def generate_sinusoid(dur=1, amp=1, freq=1, phase=0, Fs=100):
-    """Generation of sinusoid
-
-    Notebook: PCP_08_signal.ipynb
-
-    Args:
-        dur: Duration (in seconds) of sinusoid (Default value = 1)
-        amp: Amplitude of sinusoid (Default value = 1)
-        freq: Frequency (in Hertz) of sinusoid (Default value = 1)
-        phase: Phase (relative to interval [0,1)) of sinusoid (Default value = 0)
-        Fs: Sampling rate (in samples per second) (Default value = 100)
-
-    Returns:
-        x: Signal
-        t: Time axis (in seconds)
-    """
-    num_samples = int(Fs * dur)
-    t = np.arange(num_samples) / Fs
+def generate_sinusoid(dur=1, amp=1, freq=1, phase=0, sr=4000):
+    """Generate a sampled sinusoid."""
+    t = np.arange(int(dur * sr)) / sr
     x = amp * np.sin(2 * np.pi * (freq * t - phase))
-    return x, t
+    return x, t, sr
 
 
-def generate_example_signal(dur=1, Fs=100):
-    """Generate example signal
-
-    Notebook: PCP_08_signal.ipynb
-
-    Args:
-        dur: Duration (in seconds) of signal (Default value = 1)
-        Fs: Sampling rate (in samples per second) (Default value = 100)
-
-    Returns:
-        x: Signal
-        t: Time axis (in seconds)
-    """
-    N = int(Fs * dur)
-    t = np.arange(N) / Fs
-    x = 1 * np.sin(2 * np.pi * (1.9 * t - 0.3))
+def generate_example_signal(dur=1, sr=100):
+    """Generate the example signal."""
+    N = int(round(sr * dur))
+    t = np.arange(N) / sr
+    x =  0.8 * np.sin(2 * np.pi * (1.9 * t - 0.3))
     x += 0.5 * np.sin(2 * np.pi * (6.1 * t - 0.1))
-    x += 0.1 * np.sin(2 * np.pi * (20 * t - 0.2))
+    x += 0.3 * np.sin(2 * np.pi * (16 * t - 0.2))
     return x, t
+    
+    
 
 def plot_inner_product(ax, t, x, y, color_x='k', color_y='r', label_x='x', label_y='y'):
     """Plot inner product
