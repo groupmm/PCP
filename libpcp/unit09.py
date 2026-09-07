@@ -24,8 +24,6 @@ def generate_example_signal(dur=1, sr=100):
     x += 0.3 * np.sin(2 * np.pi * (16 * t - 0.2))
     return x, t
     
-    
-
 def plot_inner_product(ax, t, x, y, color_x='k', color_y='r', label_x='x', label_y='y'):
     """Plot inner product
 
