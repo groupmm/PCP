@@ -24,384 +24,278 @@ def generate_example_signal(dur=1, sr=100):
     x += 0.3 * np.sin(2 * np.pi * (16 * t - 0.2))
     return x, t
     
-def plot_inner_product(ax, t, x, y, color_x='k', color_y='r', label_x='x', label_y='y'):
-    """Plot inner product
 
-    Notebook: PCP_09_dft.ipynb
-
-    Args:
-        ax: Axis handle
-        t: Time axis
-        x: Signal x
-        y: Signal y
-        color_x: Color of signal x (Default value = 'k')
-        color_y: Color of signal y (Default value = 'r')
-        label_x: Label of signal x (Default value = 'x')
-        label_y: Label of signal y (Default value = 'y')
-    """
-    ax.plot(t, x, color=color_x, linewidth=1.0, linestyle='-', label=label_x)
-    ax.plot(t, y, color=color_y, linewidth=1.0, linestyle='-', label=label_y)
-    ax.set_xlim([0, t[-1]])
-    ax.set_ylim([-1.5, 1.5])
-    ax.set_xlabel('Time (seconds)')
-    ax.set_ylabel('Amplitude')
-    sim = np.vdot(y, x)
-    ax.set_title(r'$\langle$ %s $|$ %s $\rangle = %.1f$' % (label_x, label_y, sim))
-    ax.legend(loc='upper right')
-
-
-def plot_signal_e_k(ax, x, k, show_e=True, show_opt=False):
-    """Plot signal and k-th DFT sinusoid
-
-    Notebook: PCP_09_dft.ipynb
-
-    Args:
-        ax: Axis handle
-        x: Signal
-        k: Index of DFT
-        show_e: Shows cosine and sine (Default value = True)
-        show_opt: Shows cosine with optimal phase (Default value = False)
-    """
-    N = len(x)
-    time_index = np.arange(N)
-    ax.plot(time_index, x, 'k', marker='.', markersize='10', linewidth=2.0, label='$x$')
-    plt.xlabel('Time (samples)')
-    e_k = np.exp(2 * np.pi * 1j * k * time_index / N)
-    c_k = np.real(e_k)
-    s_k = np.imag(e_k)
-    X_k = np.vdot(e_k, x)
-
-    plt.title(r'k = %d: Re($X(k)$) = %0.2f, Im($X(k)$) = %0.2f, $|X(k)|$=%0.2f' %
-              (k, X_k.real, X_k.imag, np.abs(X_k)))
-    if show_e is True:
-        ax.plot(time_index, c_k, 'r', marker='.', markersize='5',
-                 linewidth=1.0, linestyle=':', label=r'$\mathrm{Re}(\overline{\mathbf{u}}_k)$')
-        ax.plot(time_index, s_k, 'b', marker='.', markersize='5',
-                 linewidth=1.0, linestyle=':', label=r'$\mathrm{Im}(\overline{\mathbf{u}}_k)$')
-    if show_opt is True:
-        phase_k = - np.angle(X_k) / (2 * np.pi)
-        cos_k_opt = np.cos(2 * np.pi * (k * time_index / N - phase_k))
-        d_k = np.sum(x * cos_k_opt)
-        ax.plot(time_index, cos_k_opt, 'g', marker='.', markersize='5',
-                 linewidth=1.0, linestyle=':', label=r'$\cos_{k, opt}$')
-    plt.grid()
-    plt.legend(loc='lower right')
-
-
-def generate_matrix_dft(N, K):
-    """Generate a DFT (discete Fourier transfrom) matrix
-
-    Notebook: PCP_09_dft.ipynb
-
-    Args:
-        N: Number of samples
-        K: Number of frequency bins
-
-    Returns:
-        dft: The DFT matrix
-    """
-    dft = np.zeros((K, N), dtype=np.complex128)
-    time_index = np.arange(N)
-    for k in range(K):
-        dft[k, :] = np.exp(-2j * np.pi * k * time_index / N)
-    return dft
-
-
-def dft(x):
-    """Compute the discete Fourier transfrom (DFT)
-
-    Notebook: PCP_09_dft.ipynb
-
-    Args:
-        x: Signal to be transformed
-
-    Returns:
-        X: Fourier transform of x
-    """
-    x = x.astype(np.complex128)
-    N = len(x)
-    dft_mat = generate_matrix_dft(N, N)
-    return np.dot(dft_mat, x)
-
-
-def fft(x):
-    """Compute the fast Fourier transform (FFT)
-
-    Notebook: PCP_09_dft.ipynb
-
-    Args:
-        x: Signal to be transformed
-
-    Returns:
-        X: Fourier transform of x
-    """
-    x = x.astype(np.complex128)
-    N = len(x)
-    log2N = np.log2(N)
-    assert log2N == int(log2N), 'N must be a power of two!'
-    X = np.zeros(N, dtype=np.complex128)
-
-    if N == 1:
-        return x
-    else:
-        this_range = np.arange(N)
-        A = fft(x[this_range % 2 == 0])
-        B = fft(x[this_range % 2 == 1])
-        range_twiddle_k = np.arange(N // 2)
-        sigma = np.exp(-2j * np.pi * range_twiddle_k / N)
-        C = sigma * B
-        X[:N//2] = A + C
-        X[N//2:] = A - C
-        return X
-
-
-def plot_signal_dft(t, x, X, ax_sec=False, ax_Hz=False, freq_half=False, figsize=(6.2, 1.8)):
-    """Plotting function for signals and its magnitude DFT
-
-    Notebook: PCP_09_dft.ipynb
-
-    Args:
-        t: Time axis (given in seconds)
-        x: Signal
-        X: DFT
-        ax_sec: Plots time axis in seconds (Default value = False)
-        ax_Hz: Plots frequency axis in Hertz (Default value = False)
-        freq_half: Plots only low half of frequency coefficients (Default value = False)
-        figsize: Size of figure (Default value = (10, 2))
-    """
-    N = len(x)
-    if freq_half is True:
-        K = N // 2
-        X = X[:K]
-    else:
-        K = N
-
-    plt.figure(figsize=figsize)
-    ax = plt.subplot(1, 2, 1)
-    ax.set_title('$x$ with $N=%d$' % N)
-    if ax_sec is True:
-        ax.plot(t, x, 'k', marker='.', markersize='3', linewidth=0.5)
-        ax.set_xlabel('Time (seconds)')
-    else:
-        ax.plot(x, 'k', marker='.', markersize='3', linewidth=0.5)
-        ax.set_xlabel('Time (samples)')
-    ax.grid()
-
-    ax = plt.subplot(1, 2, 2)
-    ax.set_title('$|X|$')
-    if ax_Hz is True:
-        Fs = 1 / (t[1] - t[0])
-        ax_freq = Fs * np.arange(K) / N
-        ax.plot(ax_freq, np.abs(X), 'k', marker='.', markersize='3', linewidth=0.5)
-        ax.set_xlabel('Frequency (Hz)')
-
-    else:
-        ax.plot(np.abs(X), 'k', marker='.', markersize='3', linewidth=0.5)
-        ax.set_xlabel('Frequency (index)')
-    ax.grid()
-    plt.tight_layout()
-    plt.show()
-
-
-def exercise_freq_index(show_result=True):
-    """Exercise 1: Interpretation of Frequency Indices
-
-    Notebook: PCP_09_dft.ipynb
-
-    Args:
-        show_result: Show result (Default value = True)
-    """
-    if show_result is False:
+def exercise_leakage(show_result=True):
+    """Exercise 1: Frequency Bins and Spectral Leakage."""
+    if not show_result:
         return
 
-    Fs = 64
-    dur = 2
-    x, t = generate_example_signal(Fs=Fs, dur=dur)
-    X = fft(x)
+    sr = 64
+    cases = [
+        (10.0, 64, '10 Hz, one-second observation'),
+        (10.5, 64, '10.5 Hz, one-second observation'),
+        (10.5, 128, '10.5 Hz, two-second observation'),
+    ]
 
-    print('=== Plot with axes given in indices (Fs=64, dur=2) ===', flush=True)
-    plot_signal_dft(t, x, X)
+    for freq, N, heading in cases:
+        dur = N / sr
+        x, _, _ = generate_sinusoid(dur=dur, freq=freq, sr=sr)
+        X =  np.fft.fft(x)
 
-    print('=== Plot with axes given in seconds and Hertz (Fs=64, dur=2) ===', flush=True)
-    plot_signal_dft(t, x, X, ax_sec=True, ax_Hz=True, freq_half=True)
+        bin_spacing = sr / N
+        bin_position = freq / bin_spacing
+        lies_on_bin = np.isclose(bin_position, round(bin_position))
 
-    Fs = 32
-    dur = 2
-    x, t = generate_example_signal(Fs=Fs, dur=dur)
-    X = fft(x)
+        # Nonnegative frequency bins and their unnormalized magnitudes
+        k = np.arange(N // 2 + 1)
+        freqs = k * bin_spacing
+        magnitude = np.abs(X[:N // 2 + 1])
 
-    print('=== Plot with axes given in indices (Fs=32, dur=2) ===', flush=True)
-    plot_signal_dft(t, x, X)
+        print(heading)
+        print(f'  sr:                   {sr} Hz')
+        print(f'  N:                    {N}')
+        print(f'  duration:             {dur:g} s')
+        print(f'  bin spacing:          {bin_spacing:g} Hz')
+        print(f'  theoretical bin:      k = {bin_position:g}')
+        print(f'  lies on a DFT bin:    {"yes" if lies_on_bin else "no"}')
 
-    print('=== Plot with axes given in seconds and Hertz (Fs=32, dur=2) ===', flush=True)
-    plot_signal_dft(t, x, X, ax_sec=True, ax_Hz=True, freq_half=True)
+        fig, ax = plt.subplots(figsize=(5.2, 2.1), layout='tight')
+
+        # A stem plot emphasizes the discrete frequency bins.
+        markerline, stemlines, _ = ax.stem(
+            freqs,
+            magnitude,
+            linefmt='k-',
+            markerfmt='ko',
+            basefmt=' ',
+        )
+        plt.setp(markerline, markersize=3)
+        plt.setp(stemlines, linewidth=1)
+
+        ax.axvline(
+            freq,
+            color='red',
+            linestyle=':',
+            linewidth=1.2,
+            label=rf'$f={freq:g}\,\mathrm{{Hz}}$',
+        )
+
+        ax.set(
+            xlabel='Frequency (Hz)',
+            ylabel='Magnitude',
+            xlim=(0, sr / 2),
+            ylim=(0, 1.05 * magnitude.max()),
+        )
+        ax.grid(alpha=0.3)
+        ax.legend(loc='upper right', framealpha=1)
+
+        bin_axis = ax.secondary_xaxis(
+            'top',
+            functions=(
+                lambda f, spacing=bin_spacing: f / spacing,
+                lambda k, spacing=bin_spacing: k * spacing,
+            ),
+        )
+        bin_axis.set_xlabel('Frequency index $k$')
+
+        plt.show()
+
+
+
+def plot_signal_dft_one_sided(
+        x, X, sr, reference_freqs=None, figsize=(5.2, 3.0)):
+    """Plot a signal and its one-sided DFT magnitude."""
+    N = len(x)
+    n = np.arange(N)
+    t = n / sr
+
+    k = np.arange(N // 2 + 1)
+    freqs = k * sr / N
+    magnitude = np.abs(X[:N // 2 + 1])
+
+    data = [
+        (t, x, rf'Signal $x$ ($N={N}$)', 'Time (seconds)'),
+        (freqs, magnitude, 'One-Sided DFT Magnitude',
+         'Frequency (Hertz)'),
+    ]
+
+    fig, axes = plt.subplots(
+        len(data), 1,
+        figsize=figsize,
+        layout='tight',
+    )
+
+    for ax, (axis, values, title, xlabel) in zip(axes, data):
+        ax.plot(axis, values, 'ko-', ms=2.5, lw=1.2)
+        ax.set(
+            title=title,
+            xlabel=xlabel,
+            xlim=(axis[0], axis[-1]),
+        )
+        ax.grid(alpha=0.3)
+
+    if reference_freqs is not None:
+        for index, freq in enumerate(reference_freqs, start=1):
+                axes[1].axvline(
+                    freq,
+                    color='red',
+                    linestyle=':',
+                    linewidth=1.2
+                )
+    plt.show()
 
 
 def exercise_missing_time(show_result=True):
-    """Exercise 2: Missing Time Localization
-
-    Notebook: PCP_09_dft.ipynb
-
-    Args:
-        show_result: Show result (Default value = True)
-    """
-    if show_result is False:
+    """Exercise 2: Frequency Content Without Time Localization."""
+    if not show_result:
         return
 
-    N = 256
-    T = 6
-    omega1 = 1
-    omega2 = 5
-    amp1 = 1
-    amp2 = 0.5
+    sr = 32
+    T = 4
+    N = T * sr
 
-    t = np.linspace(0, T, N)
-    t1 = t[:N//2]
-    t2 = t[N//2:]
+    freq_1 = 1.1
+    freq_2 = 3.9
+    amp_1 = 1
+    amp_2 = 0.5
 
-    x1 = amp1 * np.sin(2*np.pi*omega1*t) + amp2 * np.sin(2*np.pi*omega2*t)
-    x2 = np.concatenate((amp1 * np.sin(2*np.pi*omega1*t1), amp2 * np.sin(2*np.pi*omega2*t2)))
+    t = np.arange(N) / sr
 
-    X1 = fft(x1)
-    X2 = fft(x2)
+    sinusoid_1 = amp_1 * np.sin(2 * np.pi * freq_1 * t)
+    sinusoid_2 = amp_2 * np.sin(2 * np.pi * freq_2 * t)
 
-    print('=== Plot with axes given in indices ===')
-    plot_signal_dft(t, x1, X1)
-    plot_signal_dft(t, x2, X2)
-    plt.show()
+    # Both frequencies occur throughout the analysis interval.
+    x_superposition = sinusoid_1 + sinusoid_2
 
-    print('=== Plot with axes given in seconds and Hertz ===')
-    plot_signal_dft(t, x1, X1, ax_sec=True, ax_Hz=True, freq_half=True)
-    plot_signal_dft(t, x2, X2, ax_sec=True, ax_Hz=True, freq_half=True)
-    plt.show()
+    # The frequencies occur during different halves of the interval.
+    x_concatenation = np.where(
+        t < T / 2,
+        sinusoid_1,
+        sinusoid_2,
+    )
+
+    X_superposition = np.fft.fft(x_superposition)
+    X_concatenation = np.fft.fft(x_concatenation)
+
+    reference_freqs = [freq_1, freq_2]
+
+    print('Superposition: Both frequencies occur throughout the signal')
+    plot_signal_dft_one_sided(
+        x_superposition,
+        X_superposition,
+        sr,
+        reference_freqs=reference_freqs,
+    )
+
+    print('Concatenation: The frequencies occur at different times')
+    plot_signal_dft_one_sided(
+        x_concatenation,
+        X_concatenation,
+        sr,
+        reference_freqs=reference_freqs,
+    )
+
+    
+    
+
+def generate_matrix_dft(N):
+    """Generate the N x N DFT matrix."""
+    n = np.arange(N)
+    return np.exp(-2j * np.pi * n[:, None] * n / N)
 
 
-def exercise_chirp(show_result=True):
-    """Exercise 3: Chirp Signal
+def fft(x):
+    """Compute the FFT recursively for a signal of power-of-two length."""
+    x = np.asarray(x, dtype=np.complex128)
+    N = len(x)
+    assert N > 0 and np.log2(N).is_integer(), (
+        'Signal length must be a power of two.'
+    )
 
-    Notebook: PCP_09_dft.ipynb
+    if N == 1:
+        return x
 
-    Args:
-        show_result: Show result (Default value = True)
-    """
-    if show_result is False:
+    # DFTs of the even- and odd-indexed samples
+    A = fft(x[::2])
+    B = fft(x[1::2])
+
+    # Twiddle factors and butterfly operations
+    k = np.arange(N // 2)
+    C = np.exp(-2j * np.pi * k / N) * B
+    return np.concatenate((A + C, A - C))
+    
+def exercise_dft_inverse(show_result=True):
+    """Exercise 3: Inverse DFT and Signal Reconstruction."""
+    if not show_result:
         return
 
-    def generate_chirp_linear(t0=0, t1=1, N=128):
-        """Generation chirp with linear frequency increase
-
-        Notebook: PCP_09_dft.ipynb
-
-        Args:
-            t0: Start time in seconds (Default value = 0)
-            t1: End time in seconds (Default value = 1)
-            N: Number of samples (Default value = 128)
-
-        Returns:
-            x: Generated chirp signal
-            t: Time axis (in seconds)
-        """
-        t = np.linspace(t0, t1, N)
-        x = np.sin(np.pi * t ** 2)
-        return x, t
-
-    def generate_chirp_plot_signal_dft(t0, t1, N):
-        """Plot linear chirp signal
-
-            Notebook: PCP_09_dft.ipynb
-
-            Args:
-                t0: Start time in seconds
-                t1: End time in seconds
-                N: Number of samples
-        """
-        x, t = generate_chirp_linear(t0=t0, t1=t1, N=N)
-        X = fft(x)
-        plot_signal_dft(t, x, X, ax_sec=True, ax_Hz=True, freq_half=True)
-
-    generate_chirp_plot_signal_dft(t0=0, t1=2, N=128)
-    generate_chirp_plot_signal_dft(t0=0, t1=4, N=128)
-    generate_chirp_plot_signal_dft(t0=4, t1=8, N=128)
-    generate_chirp_plot_signal_dft(t0=4, t1=8, N=256)
-
-
-def exercise_inverse(show_result=True):
-    """Exercise 4: Inverse DFT
-
-    Notebook: PCP_09_dft.ipynb
-
-    Args:
-        show_result: Show result (Default value = True)
-    """
-    if show_result is False:
-        return
-
-    def generate_matrix_dft_inv(N, K):
-        """Generates an IDFT (inverse discrete Fourier transfrom) matrix
-
-        Notebook: PCP_09_dft.ipynb
-
-        Args:
-            N: Number of samples
-            K: Number of frequency bins
-
-        Returns:
-            dft: The DFT matrix
-        """
-        dft_inv = np.zeros((K, N), dtype=np.complex128)
-        time_index = np.arange(N)
-        for k in range(K):
-            dft_inv[k, :] = np.exp(2j * np.pi * k * time_index / N) / N
-        return dft_inv
+    def generate_matrix_dft_inv(N):
+        """Generate the N x N inverse DFT matrix."""
+        k = np.arange(N)[:, None]
+        n = np.arange(N)[None, :]
+        return np.exp(2j * np.pi * k * n / N) / N
+    
+    def fft_inv(X):
+        """Compute the inverse DFT using the forward FFT."""
+        X = np.asarray(X, dtype=np.complex128)
+        return np.conjugate(fft(np.conjugate(X))) / len(X)
 
     N = 32
-    dft_mat = generate_matrix_dft(N, N)
-    dft_inv_mat = generate_matrix_dft_inv(N, N)
+    dft_mat = generate_matrix_dft(N)
+    dft_inv_mat = generate_matrix_dft_inv(N)
+    identity = np.eye(N)
 
-    A = np.matmul(dft_mat, dft_inv_mat)
-    B = np.matmul(dft_inv_mat, dft_mat)
-    I = np.eye(N)
-    print('Comparison between DFT * DFT_inv and I:', np.allclose(A, I))
-    print('Comparison between DFT_inv * DFT and I:', np.allclose(B, I))
+    # Verify the inverse identities.
+    print(
+        'DFT @ DFT_inv equals identity:',
+        np.allclose(dft_mat @ dft_inv_mat, identity),
+    )
+    print(
+        'DFT_inv @ DFT equals identity:',
+        np.allclose(dft_inv_mat @ dft_mat, identity),
+    )
 
-    dft_inv_mat_np = np.linalg.inv(dft_mat)
-    print('Comparison between DFT_inv and DFT_inv_via_np:',
-          np.allclose(dft_inv_mat, dft_inv_mat_np))
+    # Compare with a general matrix inverse.
+    print(
+        'Explicit inverse agrees with np.linalg.inv:',
+        np.allclose(dft_inv_mat, np.linalg.inv(dft_mat)),
+    )
 
-    def fft_inv(x):
-        """Compute the fast inverse Fourier transform (FFT)
+    # Transform and reconstruct a real-valued test signal.
+    n = np.arange(N)
+    x = (
+        np.sin(2 * np.pi * 2 * n / N)
+        + 0.5 * np.cos(2 * np.pi * 5 * n / N)
+    )
 
-        Notebook: PCP_09_dft.ipynb
+    X = dft_mat @ x
+    x_rec = dft_inv_mat @ X
+    reconstruction_error = np.max(np.abs(x - x_rec))
 
-        Args:
-            x: Signal to be transformed
+    fig, ax = plt.subplots(figsize=(5.2, 2.0), layout='tight')
+    ax.plot(n, x, 'ko-', ms=3, lw=1, label='Original')
+    ax.plot(
+        n,
+        x_rec.real,
+        'r.--',
+        ms=3,
+        lw=1,
+        label='Reconstructed',
+    )
+    ax.set(
+        title=f'Maximum reconstruction error: '
+              f'{reconstruction_error:.2e}',
+        xlabel='Sample index $n$',
+        ylabel='Signal value',
+        xlim=(n[0], n[-1]),
+    )
+    ax.grid(alpha=0.3)
+    ax.legend(loc='upper right', framealpha=1)
+    plt.show()
 
-        Returns:
-            X: Fourier transform of x
-        """
-        x = x.astype(np.complex128)
-        N = len(x)
-        log2N = np.log2(N)
-        assert log2N == int(log2N), 'N must be a power of two!'
-        X = np.zeros(N, dtype=np.complex128)
-
-        if N == 1:
-            return x
-        else:
-            this_range = np.arange(N)
-            A = fft_inv(x[this_range % 2 == 0])
-            B = fft_inv(x[this_range % 2 == 1])
-            range_twiddle_k = np.arange(N // 2)
-            sigma = np.exp(2j * np.pi * range_twiddle_k / N)
-            C = sigma * B
-            X[:N//2] = A + C
-            X[N//2:] = A - C
-            return X / 2
-
-    N = 16
-    x = np.arange(N).astype('float')
+    # Compare the fast inverse with NumPy's implementation.
     X = fft(x)
-    y = fft_inv(X)
-    print('Example signal x:', x)
-    print('Signal y = fft_inv(fft(x)):', y, sep='\n')
-    print('Comparison between x and y:', np.allclose(x, y))
+    print(
+        'fft_inv agrees with np.fft.ifft:',
+        np.allclose(fft_inv(X), np.fft.ifft(X)),
+    )
