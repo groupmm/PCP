@@ -14,6 +14,7 @@
 \usepackage{geometry}      			% For page margins
 \usepackage{graphicx}      			% For including logos
 \usepackage{tocloft}        		% For table of contents
+\usepackage[bottom]{footmisc}		% For footnotes at the bottom of the page
 \usepackage[hidelinks]{hyperref}	% For clickable table of contents
 
 % -------------------------------------------------
@@ -111,14 +112,19 @@
 \pagestyle{empty}
 \newpage
 
+% ---------------- Acknowledgment Footer ----------------
+\pagestyle{empty}
+\cleardoublepage
+\includepdf{../../data_layout/acknowledgment_footer/acknowledgment_footer.pdf}
+
 % ---------------- Preface ----------------
-% \cleardoublepage
-% \pagenumbering{roman}
-% \setcounter{page}{1}
-% \pagestyle{fancy}
-% \markright{Preface}
-% \thispagestyle{sectionfirst}
-% \input{preface}
+\cleardoublepage
+\pagenumbering{roman}
+\setcounter{page}{1}
+\pagestyle{fancy}
+\markright{Preface}
+\thispagestyle{sectionfirst}
+\input{preface}
 
 % ---------------- Table of Contents ----------------
 \cleardoublepage

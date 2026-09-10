@@ -17,7 +17,20 @@ jobs:
 
       - name: Extract version
         id: get_version
-        run: echo "version=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+
+          if [[ "$TAG" == *-pdf ]]; then
+            VERSION="${TAG#v}"
+            VERSION="${VERSION%-pdf}"
+            INCLUDE_PDF=true
+          else
+            VERSION="${TAG#v}"
+            INCLUDE_PDF=false
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "include_pdf=$INCLUDE_PDF" >> "$GITHUB_OUTPUT"
 
       - name: Download font
         run: |
@@ -56,9 +69,14 @@ jobs:
 
       - name: Create zip file          
         run: |
-          cp tools/pdf_booklet/PCP_all.pdf ./PCP_all.pdf
           ZIP_NAME="PCP_${{ steps.get_version.outputs.version }}.zip"
-          zip "$ZIP_NAME" -@ < <(git ls-files; ls *.html; echo PCP_all.pdf)
+
+          if [[ "${{ steps.get_version.outputs.include_pdf }}" == "true" ]]; then
+            cp tools/pdf_booklet/PCP_all.pdf ./PCP_all.pdf
+            zip "$ZIP_NAME" -@ < <(git ls-files; ls *.html; echo PCP_all.pdf)
+          else
+            zip "$ZIP_NAME" -@ < <(git ls-files; ls *.html)
+          fi
 
       - name: Upload release asset
         uses: softprops/action-gh-release@v1

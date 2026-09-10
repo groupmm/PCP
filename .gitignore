@@ -24,6 +24,7 @@ output/
 *.auxlock
 *.newpax
 *.fls
+*.fdb_latexmk
 
 # Exported html and pdf files
 PCP*.html
