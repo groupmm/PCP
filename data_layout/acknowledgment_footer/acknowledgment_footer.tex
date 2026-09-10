@@ -1,0 +1,65 @@
+\DocumentMetadata{}
+\documentclass[9pt,twoside]{article}
+
+% -------------------------------------------------
+% Packages
+% -------------------------------------------------
+\usepackage{fontspec}
+\setmainfont{Constantia}
+\usepackage{microtype}
+
+\usepackage{geometry}      			% For page margins
+\usepackage{graphicx}      			% For including logos
+
+% -------------------------------------------------
+% Page setup
+% -------------------------------------------------
+% Set header and footer
+\geometry{
+  paperwidth=17cm,
+  paperheight=24cm,
+  twoside,
+  inner=25mm,
+  outer=20mm,
+  top=25mm,
+  bottom=20mm,
+  headheight=5mm,
+  headsep=10mm
+}
+
+% -------------------------------------------------
+% Document
+% -------------------------------------------------
+\begin{document}
+
+\begin{titlepage}
+
+\mbox{}
+\vfill
+
+\noindent\rule{\textwidth}{0.8pt}
+
+{\fontsize{7.5pt}{11pt}\selectfont\noindent The International Audio Laboratories Erlangen are a joint institution of the Friedrich-Alexander-Universität Erlangen-Nürnberg (FAU) and Fraunhofer Institute for Integrated Circuits IIS. This work was supported in part by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) through the project ``Learning with Music Signals: Technology Meets Education'' (Grant No. 500643750, MU 2686/15-1).
+}
+
+\begin{center}
+	\begin{minipage}[c]{2.30cm}  % AudioLabs box width
+		\includegraphics[width=2.22cm]{figures/01_Logo_AudioLabs.pdf}  % AudioLabs img width
+	\end{minipage}
+	\hfill
+	\begin{minipage}[c]{3.00cm}  % FAU box width
+		\includegraphics[width=2.92cm]{figures/02_Logo_FAU.pdf}  % FAU img width
+	\end{minipage}
+	\hfill
+	\begin{minipage}[c]{3.4cm}  % IIS box width
+		\includegraphics[width=3.32cm]{figures/03_Logo_IIS.pdf}  % IIS img width
+	\end{minipage}
+	\hfill
+	\begin{minipage}[c]{2.40cm}  % DFG box width
+		\includegraphics[width=2.32cm]{figures/04_Logo_DFG.pdf}  % DFG img width
+	\end{minipage}
+\end{center}
+
+\end{titlepage}
+
+\end{document}
