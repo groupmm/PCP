@@ -157,7 +157,7 @@ def exercise_polynomial(show_result=True):
          '$p(z)=z^3+(1-2i)z^2+3$'),
     ]
 
-    fig, axes = plt.subplots(2, 3, figsize=(6.4, 4.2))
+    fig, axes = plt.subplots(2, 3, figsize=(6.1, 4.2))
 
     for ax, (p, title) in zip(axes.flat, polynomials):
         visualize_roots(p, ax, title)
