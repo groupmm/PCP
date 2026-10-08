@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 import matplotlib.image as mpimg
 
 
-def exercise_vis1D(show_result=True):
+def exercise_vis_1d(show_result=True):
     """Exercise 1: Visualizing a Sampled Sinusoid.
 
     Notebook: PCP_05_vis.ipynb
@@ -81,6 +81,7 @@ def exercise_vis1D(show_result=True):
         basefmt='gray',
     )
     stem.markerline.set_markersize(4)
+    stem.baseline.set_zorder(1)  # Draws baseline behind stems and markers
     plt.title('Stem Plot')
     plt.xlim(0, period)
     plt.ylim(-1.1, 1.1)
@@ -178,7 +179,7 @@ def exercise_circle(show_result=True):
         plt.title(rf'$F_\mathrm{{s}} = {Fs}$')
 
 
-def exercise_logaxis(show_result=True):
+def exercise_log_axis(show_result=True):
     """Exercise 3: Comparing Linear and Logarithmic Axes.
 
     Notebook: PCP_05_vis.ipynb

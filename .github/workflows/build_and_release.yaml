@@ -81,6 +81,7 @@ jobs:
       - name: Upload release asset
         uses: softprops/action-gh-release@v1
         with:
+          name: v${{ steps.get_version.outputs.version }}
           files: PCP_${{ steps.get_version.outputs.version }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -145,7 +145,7 @@ def exercise_halving(show_result=True):
     print('Number of halvings:  ', invalid_halvings)
     print('Final width:         ', invalid_width)
 
-def exercise_isprime(show_result=True):
+def exercise_is_prime(show_result=True):
     """Exercise 4: Testing Prime Numbers.
 
     Notebook: PCP_04_control.ipynb
@@ -257,7 +257,7 @@ def exercise_root(show_result=True):
             print(
                 f'{"Iteration":>9} '
                 f'{"a":>9} {"b":>9} {"c":>9} '
-                f'{"f(a)":>10} {"f(b)":>10} {"f(c)":>10}'
+                f'{"f(a)":>11} {"f(b)":>11} {"f(c)":>11}'
             )
 
         while b - a > tolerance:
@@ -315,9 +315,9 @@ def exercise_root(show_result=True):
         2,
     )
 
-    print('\n=== Invalid input intervals ===')
+    print('\n\n=== Invalid input intervals ===')
     print('Interval [2, 4] without a sign change:', invalid_sign)
-    print('Reversed interval [4, 2]:            ', reversed_interval)
+    print('Reversed interval [4, 2]:             ', reversed_interval)
 
     print('\n=== Root of sin(x) on [3, 4] ===')
 

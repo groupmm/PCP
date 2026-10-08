@@ -11,7 +11,7 @@ import IPython.display as ipd
 
 def generate_sinusoid(dur=1, amp=1, freq=1, phase=0, sr=4000):
     """Generate a sampled sinusoid."""
-    t = np.arange(int(dur * sr)) / sr
+    t = np.arange(int(round(sr * dur))) / sr
     x = amp * np.sin(2 * np.pi * (freq * t - phase))
     return x, t, sr
 
@@ -51,7 +51,7 @@ def plot_reconstruction(x_ref, t_ref, x, t, x_rec, figsize=(6.2, 1.7)):
     markers.set_zorder(3)
     stems.set_zorder(3)
     plt.plot(t_ref, x_rec, color='blue', label='Reconstruction')
-    plt.title(rf'Sampling rate $F_\mathrm{{s}}={sr:g}$ Hz')
+    plt.title(rf'Sampling Rate $F_\mathrm{{s}}={sr:g}$ Hz')
     plt.xlabel('Time (seconds)')
     plt.ylabel('Signal value')
     plt.xlim(0, dur)
@@ -60,8 +60,8 @@ def plot_reconstruction(x_ref, t_ref, x, t, x_rec, figsize=(6.2, 1.7)):
     plt.legend(loc='upper right', framealpha=1)
     plt.show()
     
-def exercise_aliasing_sinus(show_result=True):
-    """Exercise 2: Aliasing with Sinusoids.
+def exercise_aliasing_sinusoid(show_result=True):
+    """Exercise 1: Aliasing with Sinusoids.
 
     Notebook: PCP_08_signal.ipynb
 
@@ -72,8 +72,8 @@ def exercise_aliasing_sinus(show_result=True):
         return
 
     # Generate a densely sampled reference signal
-    dur = 2
-    x_ref, t_ref, _ = generate_sinusoid(dur=dur, freq=9.99, sr=128)
+    dur = 3
+    x_ref, t_ref, _ = generate_sinusoid(dur=dur, freq=9.5, sr=128)
 
     plt.figure(figsize=(6.2, 1.7), layout='tight')
     plt.plot(t_ref, x_ref, color='black', label='Reference')
@@ -92,7 +92,27 @@ def exercise_aliasing_sinus(show_result=True):
         x_rec = reconstruction_sinc(x, t, t_ref)
         plot_reconstruction(
             x_ref, t_ref, x, t, x_rec, figsize=(6.2, 1.7)
-        )    
+        )
+
+    ipd.display(ipd.Markdown(
+        "**Observations / Conclusions:**\n"
+        "* Sampling rates 64 Hz and 32 Hz: The reconstruction is visually "
+        "indistinguishable from the reference signal.\n"
+        "* Sampling rate 20 Hz: The reconstruction deviates from the reference "
+        "in the first and last 0.4 seconds, but is nearly perfect in between.\n"
+        "* Sampling rates 16, 12, 8, and 4 Hz: The reconstruction is a sinusoid "
+        "of lower frequency than the reference signal.\n"
+        "* Explanation: The reference sinusoid has a frequency of 9.5 Hz, "
+        "so the Nyquist rate is 19\u00a0Hz. By the sampling theorem, perfect reconstruction "
+        "is possible for any sampling rate above 19 Hz. At 64 Hz and 32 Hz, this "
+        "condition is met with a large margin. At 20 Hz, it is only barely met. "
+        "Perfect reconstruction then still holds in theory, but assumes an infinitely "
+        "long signal. Since our signal is finite, the sinc interpolation lacks samples "
+        "beyond the signal boundaries, which causes the errors at the beginning and end. "
+        "At 16 Hz and below, the condition is violated. The samples cannot distinguish "
+        "the original sinusoid from one of lower frequency (aliasing), so the original "
+        "frequency can no longer be recovered.\n"
+    ))
 
 def exercise_sinc(show_result=True):
     """Exercise 2: Understanding Sinc Interpolation."""

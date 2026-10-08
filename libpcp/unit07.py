@@ -8,79 +8,7 @@ This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
 import numpy as np
 from matplotlib import pyplot as plt
 from math import gcd
-#from libpcp.unit06 import plot_vector
-
-
-def exp_approx_Euler(x_min=0, x_max=2, x_delta=0.01, f_0=1):
-    """Approximation of exponential function using Euler's method
-
-    Notebook: PCP_07_exp.ipynb
-
-    Args:
-        x_min: Start of input interval (Default value = 0)
-        x_max: End of input interval (Default value = 2)
-        x_delta: Step size (Default value = 0.01)
-        f_0: Initial condition (Default value = 1)
-
-    Returns:
-        f: Signal
-        x: Sampled input interval
-    """
-    x = np.arange(x_min, x_max+x_delta, x_delta)
-    N = len(x)
-    f = np.zeros(N)
-    f[0] = f_0
-    for n in range(1, N):
-        f[n] = f[n-1] + f[n-1]*x_delta
-    return f, x
-
-
-def plot_vector(c, color='k', start=0, linestyle='-'):
-    """Plotting complex number as vector
-
-    Notebook: PCP_07_exp.ipynb
-
-    Args:
-        c: Complex number
-        color: Vector color (Default value = 'k')
-        start: Start of vector (Default value = 0)
-        linestyle: Line Style of vector (Default value = '-')
-    """
-    return plt.arrow(np.real(start), np.imag(start), np.real(c), np.imag(c),
-                     linestyle=linestyle, head_width=0.05,
-                     fc=color, ec=color, overhang=0.3, length_includes_head=True)
-
-
-def plot_root_unity(N, ax):
-    """Plotting N-th root of unity into figure with axis
-
-    Notebook: PCP_07_exp.ipynb
-
-    Args:
-        N: Root number
-        ax: Axis handle
-    """
-    root_unity = np.exp(2j * np.pi / N)
-    root_unity_power = 1
-
-    ax.grid()
-    ax.set_xlim([-1.4, 1.4])
-    ax.set_ylim([-1.4, 1.4])
-    ax.set_xlabel(r'$\mathrm{Re}$')
-    ax.set_ylabel(r'$\mathrm{Im}$')
-    ax.set_title('Roots of unity for $N=%d$' % N)
-
-    for n in range(0, N):
-        colorPlot = 'r' if gcd(n, N) == 1 else 'k'
-        plot_vector(root_unity_power, color=colorPlot)
-        ax.text(np.real(1.2*root_unity_power), np.imag(1.2*root_unity_power),
-                r'$\rho_{%s}^{%s}$' % (N, n), size='14',
-                color=colorPlot, ha='center', va='center')
-        root_unity_power *= root_unity
-
-    circle_unit = plt.Circle((0, 0), 1, color='lightgray', fill=0)
-    ax.add_artist(circle_unit)
-
+from IPython.display import display, Markdown
 
 def exercise_approx_exp(show_result=True):
     """Exercise 1: Comparing approximations of the exponential function.
@@ -162,13 +90,14 @@ def exercise_approx_exp(show_result=True):
 
     axes[0].legend();
     plt.show()
-    print(
-        '\nFor sufficiently large N, a displayed error may stop decreasing because'
-        '\nfloating-point precision has been reached. Such a plateau reflects a'
-        '\nlimitation of the numerical computation rather than a failure of the'
-        '\nunderlying mathematical approximation.'        
-    )    
-    
+
+    display(Markdown(
+        'For sufficiently large $N$, a displayed error may stop decreasing '
+        'because floating-point precision has been reached. Such a plateau '
+        'reflects a limitation of the numerical computation rather than a '
+        'failure of the underlying mathematical approximation.'
+    ))
+
 
 def exercise_gaussian(show_result=True):
     """Exercise 2: Exploring the Gaussian function.

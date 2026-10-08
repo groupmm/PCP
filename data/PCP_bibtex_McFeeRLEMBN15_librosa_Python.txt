@@ -1,7 +1,7 @@
 @inproceedings{McFeeRLEMBN15_librosa_Python,
   author    = {Brian McFee and Colin Raffel and Dawen Liang and Daniel P.W. Ellis and Matt McVicar and Eric Battenberg and Oriol Nieto},
   title     = {Librosa: {A}udio and Music Signal Analysis in {P}ython},
-  booktitle = {Proceedings the Python Science Conference},
+  booktitle = {Proceedings of the Python Science Conference},
   pages     = {18--25},
   address   = {Austin, Texas, USA},
   year      = {2015},

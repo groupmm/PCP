@@ -55,6 +55,17 @@
         font-size: 12pt !important;
     }
 
+    /* Scale inline code in headers with the header font size */
+    .jp-RenderedHTMLCommon h1 code,
+    .jp-RenderedHTMLCommon h2 code,
+    .jp-RenderedHTMLCommon h3 code,
+    .jp-RenderedHTMLCommon h4 code,
+    .jp-RenderedHTMLCommon h5 code,
+    .jp-RenderedHTMLCommon h6 code {
+        font-size: 0.8em !important;
+        line-height: inherit !important;
+    }
+
     /* Make headers bold and set margins*/
     .jp-RenderedHTMLCommon h1,
     .jp-RenderedHTMLCommon h2,
@@ -160,6 +171,14 @@
     .jp-OutputArea-output,
     .jp-RenderedText {
         break-inside: auto !important;
+    }
+
+    /* Avoid orphan/widow lines at page breaks */
+    p, li, blockquote,
+    .jp-RenderedHTMLCommon p,
+    .jp-RenderedHTMLCommon li {
+        orphans: 2;
+        widows: 2;
     }
 </style>
 {% endblock header %}

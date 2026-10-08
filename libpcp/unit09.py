@@ -1,5 +1,5 @@
 """
-Module: libpcp.dft
+Module: libpcp.unit09
 Author: Meinard Mueller, International Audio Laboratories Erlangen
 License: The MIT license, https://opensource.org/licenses/MIT
 This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
@@ -7,20 +7,17 @@ This file is part of the PCP Notebooks (https://www.audiolabs-erlangen.de/PCP)
 
 import numpy as np
 from matplotlib import pyplot as plt
+import IPython.display as ipd
 
-def generate_sinusoid(dur=1, amp=1, freq=1, phase=0, sr=4000):
-    """Generate a sampled sinusoid."""
-    t = np.arange(int(dur * sr)) / sr
-    x = amp * np.sin(2 * np.pi * (freq * t - phase))
-    return x, t, sr
+from .unit08 import generate_sinusoid
 
 
 def generate_example_signal(dur=1, sr=100):
     """Generate the example signal."""
     N = int(round(sr * dur))
     t = np.arange(N) / sr
-    x =  0.8 * np.sin(2 * np.pi * (1.9 * t - 0.3))
-    x += 0.5 * np.sin(2 * np.pi * (6.1 * t - 0.1))
+    x =  0.8 * np.sin(2 * np.pi * (2 * t - 0.3))
+    x += 0.5 * np.sin(2 * np.pi * (6 * t - 0.1))
     x += 0.3 * np.sin(2 * np.pi * (16 * t - 0.2))
     return x, t
     
@@ -59,7 +56,7 @@ def exercise_leakage(show_result=True):
         print(f'  theoretical bin:      k = {bin_position:g}')
         print(f'  lies on a DFT bin:    {"yes" if lies_on_bin else "no"}')
 
-        fig, ax = plt.subplots(figsize=(5.2, 2.1), layout='tight')
+        fig, ax = plt.subplots(figsize=(5.2, 1.9), layout='tight')
 
         # A stem plot emphasizes the discrete frequency bins.
         markerline, stemlines, _ = ax.stem(
@@ -77,7 +74,7 @@ def exercise_leakage(show_result=True):
             color='red',
             linestyle=':',
             linewidth=1.2,
-            label=rf'$f={freq:g}\,\mathrm{{Hz}}$',
+            label=rf'$\omega={freq:g}\,\mathrm{{Hz}}$',
         )
 
         ax.set(
@@ -197,7 +194,6 @@ def exercise_missing_time(show_result=True):
 
     
     
-
 def generate_matrix_dft(N):
     """Generate the N x N DFT matrix."""
     n = np.arange(N)
@@ -299,3 +295,84 @@ def exercise_dft_inverse(show_result=True):
         'fft_inv agrees with np.fft.ifft:',
         np.allclose(fft_inv(X), np.fft.ifft(X)),
     )
+
+
+def generate_plucked_string(dur=2, freq=220, sr=16000):
+    """Generate a plucked-string sound."""
+    t = np.arange(int(dur * sr)) / sr
+
+    # Add the fundamental and its harmonics
+    harmonics = (1, 0.7, 0.5, 0.35, 0.25, 0.18, 0.12, 0.08)
+    x = sum(
+        amp * np.sin(2 * np.pi * k * freq * t)
+        for k, amp in enumerate(harmonics, start=1)
+    )
+
+    # Create the attack, gradual decay, and release
+    envelope = np.exp(-2 * t)
+    n_attack = int(0.005 * sr)
+    n_release = int(0.25 * sr)
+    envelope[:n_attack] *= np.linspace(0, 1, n_attack)
+    envelope[-n_release:] *= np.linspace(1, 0, n_release)
+    x *= envelope
+
+    # Prevent clipping
+    x *= 0.8 / np.max(np.abs(x))
+    return x, t, sr
+
+def exercise_sound_modification(show_result=True):
+    """Exercise 4: Modifying a Sound in the Frequency Domain."""
+    if not show_result:
+        return
+
+    def plot_sound_dft(x, t, sr, title, freq_max=2500):
+        """Plot a sound and its one-sided DFT magnitude, then play it."""
+        N = len(x)
+        k = np.arange(int(freq_max * N / sr) + 1)
+        freqs = k * sr / N
+        magnitude = np.abs(np.fft.fft(x)[k])
+
+        fig, axes = plt.subplots(1, 2, figsize=(6.2, 1.9), layout='tight')
+
+        axes[0].plot(t, x, color='black', linewidth=0.5)
+        axes[0].set(
+            title=title,
+            xlabel='Time (seconds)',
+            xlim=(t[0], t[-1]),
+            ylim=(-1, 1),
+        )
+
+        axes[1].plot(freqs, magnitude, color='black', linewidth=0.8)
+        axes[1].set(
+            title='One-Sided DFT Magnitude',
+            xlabel='Frequency (Hz)',
+            xlim=(0, freq_max),
+        )
+
+        for ax in axes:
+            ax.grid(alpha=0.3)
+
+        plt.show()
+        ipd.display(ipd.Audio(x, rate=sr, normalize=False))
+
+    x, t, sr = generate_plucked_string()
+    X = np.fft.fft(x)
+    freqs = np.fft.fftfreq(len(x), d=1 / sr)
+
+    # Analysis: the peaks occur at integer multiples of 220 Hz.
+    plot_sound_dft(x, t, sr, 'Original Sound')
+
+    # Changing magnitudes: remove positive and negative frequencies.
+    X_low = X.copy()
+    X_low[np.abs(freqs) > 500] = 0
+    x_low = np.fft.ifft(X_low)
+    plot_sound_dft(x_low.real, t, sr, 'Frequencies Above 500 Hz Removed')
+
+    # print(
+    #     'Largest imaginary part:',
+    #     f'{np.max(np.abs(x_low.imag)):.2e}',
+    # )
+
+    # Changing phases: conjugation reverses the sound in time.
+    x_conj = np.fft.ifft(np.conj(X)).real
+    plot_sound_dft(x_conj, t, sr, 'Phases Reversed')

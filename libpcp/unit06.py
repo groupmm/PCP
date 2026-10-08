@@ -25,6 +25,7 @@ def create_complex_plane(figsize=(4.5, 2),
     plt.ylabel(r'$\operatorname{Im}$')
     plt.grid(alpha=0.3)
     plt.gca().set_axisbelow(True) 
+    plt.gca().set_aspect('equal') 
 
 
 def plot_complex_vector(c, start=0, color='black', linestyle='-'):
@@ -55,13 +56,13 @@ def exercise_rotate(show_result=True):
     Notebook: PCP_06_complex.ipynb
 
     Args:
-        show_result: If True, display the resulting figures.
+        show_result: If True, display the resulting figure.
     """
     if not show_result:
         return
 
     # Construct c from its modulus and argument
-    modulus = 1.2
+    modulus = 1.6
     angle_degrees = 20
     angle = np.deg2rad(angle_degrees)
     c = modulus * (np.cos(angle) + 1j * np.sin(angle))
@@ -73,7 +74,23 @@ def exercise_rotate(show_result=True):
     #print(f'conjugate:       {c_conjugate}')
     #print(f'inverse:         {c_inverse}')
 
-    create_complex_plane(figsize=(3.5, 2), xlim=(-0.1, 1.7), ylim=(-0.6, 0.6))
+    def select_complex_plane(index):
+        """Select one of the two subplots and format it as a complex plane.
+
+        Args:
+            index: Subplot index (1 for left, 2 for right).
+        """
+        plt.subplot(1, 2, index)
+        plt.xlim(-0.1, 2.7)
+        plt.ylim(-0.7, 0.7)
+        plt.xlabel(r'$\operatorname{Re}$')
+        plt.ylabel(r'$\operatorname{Im}$')
+        plt.grid(alpha=0.3)
+        plt.gca().set_axisbelow(True)
+        plt.gca().set_aspect('equal')
+
+    plt.figure(figsize=(6.1, 2), layout='tight')
+    select_complex_plane(1)
 
     v1 = plot_complex_vector(c, color='black')
     v2 = plot_complex_vector(c_conjugate, color='blue')
@@ -98,11 +115,11 @@ def exercise_rotate(show_result=True):
         return c * rotation
 
     # Rotate c clockwise by several angles
-    c = 1 + 0.5j
+    c = 1.2 + 0.6j
     angles = [15, 30, 45]
     colors = ['blue', 'green', 'red']
 
-    create_complex_plane(figsize=(3.5, 2), xlim=(-0.1, 1.7), ylim=(-0.6, 0.6))
+    select_complex_plane(2)
     handles = [plot_complex_vector(c, color='black')]
 
     for angle, color in zip(angles, colors):
@@ -113,7 +130,7 @@ def exercise_rotate(show_result=True):
 
     labels = ['$c$', '$15^\\circ$', '$30^\\circ$', '$45^\\circ$']
     plt.title('Clockwise Rotations')
-    plt.legend(handles, labels);
+    plt.legend(handles, labels)
 
 
 def exercise_polynomial(show_result=True):
@@ -224,7 +241,7 @@ def exercise_mandelbrot(show_result=True):
     )
     plt.title('Approximation of the Mandelbrot Set')
     plt.xlabel(r'$\operatorname{Re}(c)$')
-    plt.ylabel(r'$\operatorname{Im}(c)$');
+    plt.ylabel(r'$\operatorname{Im}(c)$')
 
 
 def exercise_mandelbrot_fancy(show_result=True, save_file=False):

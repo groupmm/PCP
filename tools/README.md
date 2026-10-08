@@ -44,6 +44,13 @@ Compile `tools/pdf_booklet/PCP_all.tex` to create a single, merged PDF file that
     git push origin v0.0.0
     ```
 
+    or including export of the merged pdf:
+
+    ```bash
+    git tag v0.0.0-pdf
+    git push origin v0.0.0-pdf
+    ```
+
     Upon this action, a GitHub runner automatically does the following steps (as configured in [build_and_release.yaml](../.github/workflows/build_and_release.yaml), takes about 5 minutes):
 
     1. Export all notebooks as html and pdf files using `tools/run_and_export_notebooks.py`.

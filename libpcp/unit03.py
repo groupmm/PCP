@@ -120,45 +120,44 @@ def exercise_numpy_math_function(show_result=True):
         return
 
     # Control the display of floating-point values
-    np.set_printoptions(
+    with np.printoptions(
         precision=4,
         suppress=True,
         formatter={'float': '{: 0.4f}'.format}
-    )
+    ):
+        # Convert angles from degrees to radians
+        v_deg = np.array([0, 30, 45, 60, 90, 180])
+        v_rad = np.deg2rad(v_deg)
 
-    # Convert angles from degrees to radians
-    v_deg = np.array([0, 30, 45, 60, 90, 180])
-    v_rad = np.deg2rad(v_deg)
+        print('Angle conversion')
+        print('Angles in degrees:             ', v_deg)
+        print('Angles in radians:             ', v_rad)
 
-    print('Angle conversion')
-    print('Angles in degrees:             ', v_deg)
-    print('Angles in radians:             ', v_rad)
+        # Evaluate sine and cosine
+        cos_values = np.cos(v_rad)
+        sin_values = np.sin(v_rad)
 
-    # Evaluate sine and cosine
-    cos_values = np.cos(v_rad)
-    sin_values = np.sin(v_rad)
+        print('\nTrigonometric functions')
+        print('Cosine values:                 ', cos_values)
+        print('Sine values:                   ', sin_values)
+        print('sin(30 degrees):               ', sin_values[1])
+        print('cos(60 degrees):               ', cos_values[3])
+        print('sin(90 degrees):               ', sin_values[4])
+        print('cos(180 degrees):              ', cos_values[5])
 
-    print('\nTrigonometric functions')
-    print('Cosine values:                 ', cos_values)
-    print('Sine values:                   ', sin_values)
-    print('sin(30 degrees):               ', sin_values[1])
-    print('cos(60 degrees):               ', cos_values[3])
-    print('sin(90 degrees):               ', sin_values[4])
-    print('cos(180 degrees):              ', cos_values[5])
+        # Evaluate the complex exponential
+        z = np.exp(1j * v_rad)
+        real_z = np.real(z)
+        imaginary_z = np.imag(z)
 
-    # Evaluate the complex exponential
-    z = np.exp(1j * v_rad)
-    real_z = np.real(z)
-    imaginary_z = np.imag(z)
+        print('\nComplex exponential exp(1j * v_rad):')
+        print(z, sep='\n')
+        print('Real parts:                    ', real_z)
+        print('Imaginary parts:               ', imaginary_z)
 
-    print('\nComplex exponential exp(1j * v_rad):')
-    print(z, sep='\n')
-    print('Real parts:                    ', real_z)
-    print('Imaginary parts:               ', imaginary_z)
-
-    # Verify Euler's formula
-    print('Real parts match cosine:       ',
-          np.isclose(real_z, cos_values))
-    print('Imaginary parts match sine:    ',
-          np.isclose(imaginary_z, sin_values))
+        # Verify Euler's formula
+        print('Real parts match cosine:       ',
+              np.isclose(real_z, cos_values))
+        print('Imaginary parts match sine:    ',
+              np.isclose(imaginary_z, sin_values))
     
