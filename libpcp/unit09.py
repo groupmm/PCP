@@ -123,13 +123,25 @@ def plot_signal_dft_one_sided(
     )
 
     for ax, (axis, values, title, xlabel) in zip(axes, data):
-        ax.plot(axis, values, 'ko-', ms=2.5, lw=1.2)
         ax.set(
             title=title,
             xlabel=xlabel,
             xlim=(axis[0], axis[-1]),
         )
         ax.grid(alpha=0.3)
+
+    axes[0].plot(t, x, 'ko-', ms=2.5, lw=1.2)
+
+    markerline, stemlines, _ = axes[1].stem(
+        freqs,
+        magnitude,
+        linefmt='k-',
+        markerfmt='ko',
+        basefmt=' ',
+    )
+    plt.setp(markerline, markersize=3)
+    plt.setp(stemlines, linewidth=1)
+    axes[1].set_ylim(0, 1.05 * magnitude.max())
 
     if reference_freqs is not None:
         for index, freq in enumerate(reference_freqs, start=1):
@@ -297,7 +309,7 @@ def exercise_dft_inverse(show_result=True):
     )
 
 
-def generate_plucked_string(dur=2, freq=220, sr=16000):
+def generate_plucked_string(dur=2, freq=220, sr=16384):
     """Generate a plucked-string sound."""
     t = np.arange(int(dur * sr)) / sr
 
