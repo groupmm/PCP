@@ -57,7 +57,7 @@ jobs:
           playwright install chromium
 
       - name: Build HTML and PDF notebooks
-        run: python tools/run_and_export_notebooks.py --no-clean --no-run   
+        run: python tools/run_and_export_notebooks.py --no-clean --no-run --strict
 
       - name: Create merged PDF (XeLaTeX)
         uses: xu-cheng/latex-action@v4
@@ -69,7 +69,7 @@ jobs:
 
       - name: Create zip file          
         run: |
-          ZIP_NAME="PCP_${{ steps.get_version.outputs.version }}.zip"
+          ZIP_NAME="PCP.zip"
 
           if [[ "${{ steps.get_version.outputs.include_pdf }}" == "true" ]]; then
             cp tools/pdf_booklet/PCP_all.pdf ./PCP_all.pdf
@@ -82,6 +82,6 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: v${{ steps.get_version.outputs.version }}
-          files: PCP_${{ steps.get_version.outputs.version }}.zip
+          files: PCP.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

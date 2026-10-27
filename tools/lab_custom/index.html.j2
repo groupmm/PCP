@@ -18,8 +18,9 @@
         line-height: 1.5 !important;
     }
 
-    /* Tighter line height for markdown cells */
-    .jp-MarkdownCell .jp-RenderedHTMLCommon {
+    /* Tighter line height for markdown cells and markdown outputs (display(Markdown(...))) */
+    .jp-MarkdownCell .jp-RenderedHTMLCommon,
+    .jp-OutputArea .jp-RenderedMarkdown {
         line-height: 1.2 !important;
     }
 
@@ -112,6 +113,17 @@
     .jp-RenderedText,
     .jp-OutputArea .jp-RenderedMarkdown {
         padding-left: 20px !important;
+    }
+
+    /* Error/warning output box (stderr): align box with cell output text
+       (background moved to inner pre, since margins do not apply to table cells) */
+    .jp-RenderedText[data-mime-type='application/vnd.jupyter.stderr'] {
+        background: transparent !important;
+        padding-top: 0 !important;
+    }
+    .jp-RenderedText[data-mime-type='application/vnd.jupyter.stderr'] pre {
+        background: var(--jp-rendermime-error-background) !important;
+        padding: 4px 8px !important;
     }
 
     /* Hide code cell numbers (execution counts) */

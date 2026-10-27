@@ -55,7 +55,7 @@ Compile `tools/pdf_booklet/PCP_all.tex` to create a single, merged PDF file that
 
     1. Export all notebooks as html and pdf files using `tools/run_and_export_notebooks.py`.
     2. Create the merged pdf booklet using `tools/pdf_booklet/PCP_all.tex`.
-    3. Create a zip file of the repository contents as well as the exported html and pdf files and upload it as a release asset. This zip file is then accessible via such a link with the corresponding version number:<br> 
-    [https://github.com/groupmm/PCP/releases/download/v0.0.0/PCP_0.0.0.zip](https://github.com/groupmm/PCP/releases/download/v0.0.0/PCP_0.0.0.zip)
+    3. Create a zip file of the repository contents as well as the exported html and pdf files and upload it as a release asset. This zip file of the latest release is then accessible via the following link:<br> 
+    [https://github.com/groupmm/PCP/releases/latest/download/PCP.zip](https://github.com/groupmm/PCP/releases/latest/download/PCP.zip)
 
 6. Edit release notes on GitHub.

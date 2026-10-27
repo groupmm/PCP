@@ -18,6 +18,7 @@ Author: Sebastian Strahl
 import subprocess
 import sys
 import argparse
+import re
 
 ALL_NOTEBOOKS = [
     "PCP.ipynb",
@@ -40,6 +41,7 @@ if __name__ == "__main__":
     parser.add_argument("--no-run", dest="run", action="store_false", help="Skip running the notebooks")
     parser.add_argument("--no-html", dest="html", action="store_false", help="Skip the html export of the notebooks")
     parser.add_argument("--no-pdf", dest="pdf", action="store_false", help="Skip the pdf export of the notebooks")
+    parser.add_argument("--strict", action="store_true", help="Abort with an error (instead of a warning) if a pdf export has fallback fonts")
     args = parser.parse_args()
 
     if args.notebook:
@@ -47,6 +49,7 @@ if __name__ == "__main__":
     else:
         notebooks = ALL_NOTEBOOKS
 
+    failed_pdfs = []
     for nb in notebooks:
         print(f"Processing {nb}...")
 
@@ -76,7 +79,21 @@ if __name__ == "__main__":
                     check=True,
                 )
 
+                # Check whether math was rendered with fallback fonts (MathJax fonts not loaded in time).
+                # Then math variables use an italic system font (e.g., Tinos-Italic) instead of MathJax fonts.
+                pdf_file = nb.replace(".ipynb", ".pdf")
+                with open(pdf_file, "rb") as f:
+                    if re.search(rb"/BaseFont\s*/[A-Z]{6}\+(?!Constantia)[\w-]*Italic", f.read()):
+                        failed_pdfs.append(nb)
+
         # Immediately stop if processing fails for one notebook
         except subprocess.CalledProcessError:
             print(f"Processing failed for {nb}")
             sys.exit(1)
+
+    # Report failed pdf exports at the end so that the warning does not get lost in the nbconvert output
+    for nb in failed_pdfs:
+        print(f"WARNING: PDF export failed for {nb} (math rendered with fallback fonts). Simply try again:")
+        print(f"python tools/run_and_export_notebooks.py -n {nb} --no-clean --no-run --no-html")
+    if failed_pdfs and args.strict:
+        sys.exit(1)

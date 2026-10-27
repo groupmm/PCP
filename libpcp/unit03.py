@@ -108,8 +108,42 @@ def exercise_matrix_operation(show_result=True):
     print('Verification Ax:', verification.round(10).tolist())
     print('Original vector v:', v.tolist())
 
+def exercise_broadcasting(show_result=True):
+    """Exercise 3: Broadcasting and Array Shapes.
+
+    Notebook: PCP_03_numpy.ipynb
+
+    Args:
+        show_result: If True, display the intermediate results.
+    """
+    if not show_result:
+        return
+
+    # Check the predicted shapes by adding arrays of ones
+    shape_pairs = [((2, 3), (3,)), ((2, 3), (2,)),
+                   ((2, 3), (2, 1)), ((3,), (3, 1))]
+    print('Shapes of the sums:')
+    for shape_a, shape_b in shape_pairs:
+        try:
+            result = np.ones(shape_a) + np.ones(shape_b)
+            print(f'  {shape_a} and {shape_b}: {result.shape}')
+        except ValueError:
+            print(f'  {shape_a} and {shape_b}: Error, shapes cannot be broadcast')
+
+    # Scale the rows: w as a column of shape (3, 1)
+    y = np.arange(9).reshape((3, 3))
+    w = np.array([1, 10, 100])
+    rows_scaled = y * w.reshape((-1, 1))
+
+    print('\nMatrix y:', y, sep='\n')
+    print('Rows scaled, shapes (3, 3) and (3, 1):', rows_scaled, sep='\n')
+
+    # Scale the columns: w of shape (3,) is treated as (1, 3)
+    columns_scaled = y * w
+    print('Columns scaled, shapes (3, 3) and (3,):', columns_scaled, sep='\n')
+
 def exercise_numpy_math_function(show_result=True):
-    """Exercise 3: Trigonometric Functions and Complex Exponentials.
+    """Exercise 4: Trigonometric Functions and Complex Exponentials.
 
     Notebook: PCP_03_numpy.ipynb
 

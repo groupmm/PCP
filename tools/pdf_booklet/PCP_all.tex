@@ -14,7 +14,6 @@
 \usepackage{geometry}      			% For page margins
 \usepackage{graphicx}      			% For including logos
 \usepackage{tocloft}        		% For table of contents
-\usepackage[bottom]{footmisc}		% For footnotes at the bottom of the page
 \usepackage[hidelinks]{hyperref}	% For clickable table of contents
 
 % -------------------------------------------------
@@ -69,6 +68,8 @@
 \renewcommand{\footnotesize}{%
   \fontsize{7.5}{10}\selectfont
 }
+% Footnotes without indentation (mark flush with left margin)
+\renewcommand\@makefntext[1]{\noindent\@makefnmark#1}
 \makeatother
 
 % TOC dots for sections

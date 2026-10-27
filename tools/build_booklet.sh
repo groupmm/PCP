@@ -13,7 +13,7 @@ conda activate PCP
 # Run the notebooks and export them as html/pdf files (from the repo root)
 echo "==> Running and exporting notebooks"
 cd "$REPO_DIR"
-python tools/run_and_export_notebooks.py
+python tools/run_and_export_notebooks.py --strict
 
 # Extract annotations of the exported pdf files, so that hyperlinks survive the merge
 echo "==> Extracting pdf annotations"

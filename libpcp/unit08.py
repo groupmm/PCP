@@ -87,7 +87,7 @@ def exercise_aliasing_sinusoid(show_result=True):
     plt.show()
 
     # Sample and reconstruct at decreasing sampling rates
-    for sr in [64, 32, 20, 16, 12, 8, 4]:
+    for sr in [32, 20, 16, 12, 8]:
         x, t = sampling_equidistant(x_ref, t_ref, sr=sr)
         x_rec = reconstruction_sinc(x, t, t_ref)
         plot_reconstruction(
@@ -96,15 +96,15 @@ def exercise_aliasing_sinusoid(show_result=True):
 
     ipd.display(ipd.Markdown(
         "**Observations / Conclusions:**\n"
-        "* Sampling rates 64 Hz and 32 Hz: The reconstruction is visually "
-        "indistinguishable from the reference signal.\n"
+        "* Sampling rate 32 Hz: The reconstruction is visually indistinguishable "
+        "from the reference signal.\n"
         "* Sampling rate 20 Hz: The reconstruction deviates from the reference "
         "in the first and last 0.4 seconds, but is nearly perfect in between.\n"
-        "* Sampling rates 16, 12, 8, and 4 Hz: The reconstruction is a sinusoid "
+        "* Sampling rates 16, 12, and 8 Hz: The reconstruction is a sinusoid "
         "of lower frequency than the reference signal.\n"
         "* Explanation: The reference sinusoid has a frequency of 9.5 Hz, "
         "so the Nyquist rate is 19\u00a0Hz. By the sampling theorem, perfect reconstruction "
-        "is possible for any sampling rate above 19 Hz. At 64 Hz and 32 Hz, this "
+        "is possible for any sampling rate above 19 Hz. At 32 Hz, this "
         "condition is met with a large margin. At 20 Hz, it is only barely met. "
         "Perfect reconstruction then still holds in theory, but assumes an infinitely "
         "long signal. Since our signal is finite, the sinc interpolation lacks samples "
