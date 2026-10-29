@@ -94,6 +94,15 @@
         padding-right: 0 !important;
     }
 
+    /* Avoid a blank trailing page when the last cell ends near the page bottom */
+    .jp-Notebook,
+    .jp-Notebook > .jp-Cell:last-child,
+    .jp-Notebook > .jp-Cell:last-child .jp-Cell-outputWrapper,
+    .jp-Notebook > .jp-Cell:last-child .jp-OutputArea-output {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+    }
+
     /* Also remove some spacing around cells */
     .jp-Cell {
         margin-left: 0 !important;

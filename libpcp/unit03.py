@@ -135,7 +135,7 @@ def exercise_broadcasting(show_result=True):
     w = np.array([1, 10, 100])
     rows_scaled = y * w.reshape((-1, 1))
 
-    print('\nMatrix y:', y, sep='\n')
+    print('\n\nMatrix y:', y, sep='\n')
     print('Rows scaled, shapes (3, 3) and (3, 1):', rows_scaled, sep='\n')
 
     # Scale the columns: w of shape (3,) is treated as (1, 3)

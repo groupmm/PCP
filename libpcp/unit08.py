@@ -97,7 +97,7 @@ def exercise_aliasing_sinusoid(show_result=True):
     ipd.display(ipd.Markdown(
         "**Observations / Conclusions:**\n"
         "* Sampling rate 32 Hz: The reconstruction is visually indistinguishable "
-        "from the reference signal.\n"
+        "from the reference.\n"
         "* Sampling rate 20 Hz: The reconstruction deviates from the reference "
         "in the first and last 0.4 seconds, but is nearly perfect in between.\n"
         "* Sampling rates 16, 12, and 8 Hz: The reconstruction is a sinusoid "
@@ -129,9 +129,9 @@ def exercise_sinc(show_result=True):
 
     def create_axes():
         """Create axes with a fixed region for an external legend."""
-        fig, ax = plt.subplots(figsize=(6.2, 1.9))
+        fig, ax = plt.subplots(figsize=(6.2, 1.8))
         fig.subplots_adjust(
-            left=0.10, right=0.68, bottom=0.23, top=0.82
+            left=0.10, right=0.68, bottom=0.25, top=0.80
         )
         return ax
 
